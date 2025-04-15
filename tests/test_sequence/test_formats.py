@@ -1,0 +1,553 @@
+""" Test out the lite_media_core.path_utils formats.
+"""
+
+# pylint: disable=too-many-public-methods
+
+from __future__ import absolute_import
+
+import unittest
+
+import pytest  # pylint: disable=import-error
+
+from lite_media_core.path_utils import sequence
+
+
+class TestSequenceFromFormat(unittest.TestCase):
+    """ Ensure a lite_media_core.path_utils.sequence.Sequence can created from various string format.
+    """
+
+    def test_from_common(self):
+        """ Ensure a Sequence object can be created from a string.
+        """
+        result = sequence.Sequence.fromString("sequence.%04d.ext 1-5")
+
+        self.assertEqual(
+            ("sequence.", 1, 5, ".ext", 4,),
+            (result.head, result.frameRange.start, result.frameRange.end, result.tail, result.padding),
+        )
+
+    def test_from_common_spaces_filename(self):
+        """ Ensure a Sequence object can be created from a string.
+        """
+        result = sequence.Sequence.fromString("/path/to/a/sequ en ce.1-5#.ext")
+
+        self.assertEqual(
+            ("sequ en ce.", 1, 5, ".ext", 1,),
+            (result.head, result.frameRange.start, result.frameRange.end, result.tail, result.padding),
+        )
+
+    def test_from_common_spaces_dirname(self):
+        """ Ensure a Sequence object can be created from a string.
+        """
+        result = sequence.Sequence.fromString("/path/to/a /sequence.1-5#.ext")
+
+        self.assertEqual(
+            ("sequence.", 1, 5, ".ext", 1,),
+            (result.head, result.frameRange.start, result.frameRange.end, result.tail, result.padding),
+        )
+
+    def test_from_common_spaces(self):
+        """ Ensure a Sequence object can be created from a string.
+        """
+        result = sequence.Sequence.fromString("/path/to/a /sequ ence.1-5#.ext")
+
+        self.assertEqual(
+            ("sequ ence.", 1, 5, ".ext", 1,),
+            (result.head, result.frameRange.start, result.frameRange.end, result.tail, result.padding),
+        )
+
+    def test_from_common_padded(self):
+        """ Ensure a Sequence object can be created from a string.
+        """
+        result = sequence.Sequence.fromString("/path/to/a/sequence.0001-0005.ext")
+
+        self.assertEqual(
+            ("sequence.", 1, 5, ".ext", 4,),
+            (result.head, result.frameRange.start, result.frameRange.end, result.tail, result.padding,),
+        )
+
+    def test_from_common_noPad(self):
+        """ Ensure a Sequence object can be created from a string.
+        """
+        result = sequence.Sequence.fromString("/path/to/a/sequence.1-10#.ext")
+
+        self.assertEqual(
+            ("sequence.", 1, 10, ".ext", 2,),
+            (result.head, result.frameRange.start, result.frameRange.end, result.tail, result.padding,),
+        )
+
+    def test_from_common_noPad_2(self):
+        """ Ensure a Sequence object can be created from a string.
+        """
+        result = sequence.Sequence.fromString("/path/to/a/sequence.%d.ext 0-10")
+
+        self.assertEqual(
+            ("sequence.", 0, 10, ".ext", 2, False,),
+            (result.head, result.frameRange.start, result.frameRange.end, result.tail, result.padding, result.hasLeadingZeros,),
+        )
+
+    def test_from_common_noPad_3(self):
+        """ Ensure a Sequence object can be created from a string.
+        """
+        result = sequence.Sequence.fromString("/path/to/a/sequence.%0d.ext 1-10")
+
+        self.assertEqual(
+            ("sequence.", 1, 10, ".ext", 2, False,),
+            (result.head, result.frameRange.start, result.frameRange.end, result.tail, result.padding, result.hasLeadingZeros,),
+        )
+
+    def test_from_common_versionAndFrame(self):
+        """ Ensure a Sequence object can be created from a string.
+        """
+        result = sequence.Sequence.fromString("/path/to/a/sequence_v40.0-1@@@@.ext")
+
+        self.assertEqual(
+            (
+                "sequence_v40.",
+                0,
+                1,
+                ".ext",
+                4,
+                True,
+            ),
+            (
+                result.head,
+                result.frameRange.start,
+                result.frameRange.end,
+                result.tail, result.padding,
+                result.hasLeadingZeros,
+            ),
+        )
+
+    def test_from_common_zfillPadded(self):
+        """ Ensure a Sequence object can be created from a string.
+        """
+        result = sequence.Sequence.fromString("sequence.0800-0805#.ext")
+
+        self.assertEqual(
+            (
+                "sequence.",
+                800,
+                805,
+                ".ext",
+                4,
+                "sequence.0800-0805#.ext",
+                True,
+            ),
+            (
+                result.head,
+                result.frameRange.start,
+                result.frameRange.end,
+                result.tail,
+                result.padding,
+                result.format(sequence.PredefinedFormat.RV_EXTENDED),
+                result.hasLeadingZeros,
+            ),
+        )
+
+    def test_from_common_frameDelimiterSwitch(self):
+        """ Ensure a Sequence object can be created from a string.
+        """
+        result = sequence.Sequence.fromString("/path/to/a/sequence.799-805@@@@.ext")
+
+        self.assertEqual(
+            (
+                "sequence.",
+                799,
+                805,
+                ".ext",
+                4,
+            ),
+            (
+                result.head,
+                result.frameRange.start,
+                result.frameRange.end,
+                result.tail,
+                result.padding,
+            ),
+        )
+
+    def test_from_common_pointDelimiter(self):
+        """ Ensure a Sequence object can be created from a string.
+        """
+        result = sequence.Sequence.fromString("/path/to/a/sequence.1001-1005.ext")
+
+        self.assertEqual(
+            ("sequence.", 1001, 1005, ".ext", 4,),
+            (result.head, result.frameRange.start, result.frameRange.end, result.tail, result.padding,),
+        )
+
+    def test_from_common_underscoreDelimiter(self):
+        """ Ensure a Sequence object can be created from a string.
+        """
+        result = sequence.Sequence.fromString("/path/to/a/sequence_1-5.ext")
+
+        self.assertEqual(
+            ("sequence_", 1, 5, ".ext", 1,),
+            (result.head, result.frameRange.start, result.frameRange.end, result.tail, result.padding),
+        )
+
+    def test_from_common_multiple_extensions_contained(self):
+        """ Ensure a Sequence object can be created from a contained sequence string with multiple extensions.
+        """
+        result = sequence.Sequence.fromString("/path/to/a/sequence_1-5.bgeo.sc")
+
+        self.assertEqual(
+            ("sequence_", 1, 5, ".bgeo.sc", 1,),
+            (result.head, result.frameRange.start, result.frameRange.end, result.tail, result.padding,),
+        )
+
+    def test_from_common_multiple_extensions_extended(self):
+        """ Ensure a Sequence object can be created from an extended sequence string with multiple extensions.
+        """
+        result = sequence.Sequence.fromString("/path/to/a/sequence_%d.bgeo.sc 1-5")
+
+        self.assertEqual(
+            ("sequence_", 1, 5, ".bgeo.sc", 1,),
+            (result.head, result.frameRange.start, result.frameRange.end, result.tail, result.padding,),
+        )
+
+    def test_singleFrame(self):
+        """ Ensure a Sequence object can be created from a string.
+        """
+        result = sequence.Sequence.fromString("sequence.%04d.ext 1-1")
+
+        self.assertEqual(
+            ("sequence.", 1, 1, ".ext", 4),
+            (result.head, result.frameRange.start, result.frameRange.end, result.tail, result.padding),
+        )
+
+    def test_missingFrames(self):
+        """ Ensure a Sequence object can be created from a 'missing frame' string.
+        """
+        result = sequence.Sequence.fromString("sequence.%04d.ext 1-10 ([2,7,8])")
+
+        self.assertEqual(
+            (
+                "sequence.",
+                [1, 3, 4, 5, 6, 9, 10],
+                ".ext",
+                4,
+                [2, 7, 8],
+            ),
+            (result.head, list(result.frameRange), result.tail, result.padding, result.frameRange.missing),
+        )
+
+    def test_explicitFrameRange(self):
+        """ Ensure a Sequence object can be created from a 'explicit frame range' string.
+        """
+        result = sequence.Sequence.fromString("/path/to/a/sequence.%04d.ext [1-2, 9-10]")
+
+        self.assertEqual(
+            (
+                "sequence.",
+                1,
+                10,
+                ".ext",
+                4,
+                [3, 4, 5, 6, 7, 8]
+            ),
+            (result.head, result.frameRange.start, result.frameRange.end, result.tail, result.padding, result.frameRange.missing,),
+        )
+
+    def test_from_houdini(self):
+        """ Ensure a Sequence object can be created from a Houdini 'extended' zero padded string.
+        """
+        result = sequence.Sequence.fromString("/path/to/a/sequence.$F.ext 1-5")
+
+        self.assertEqual(
+            ("sequence.", 1, 5, ".ext", 1,),
+            (result.head, result.frameRange.start, result.frameRange.end, result.tail, result.padding),
+        )
+
+    def test_from_houdini_zeroPadded(self):
+        """ Ensure a Sequence object can be created from a Houdini 'extended' zero padded string.
+        """
+        result = sequence.Sequence.fromString("/path/to/a/sequence.$F4.ext 1-5")
+
+        self.assertEqual(
+            ("sequence.", 1, 5, ".ext", 4,),
+            (result.head, result.frameRange.start, result.frameRange.end, result.tail, result.padding),
+        )
+
+    def test_from_katana(self):
+        """ Ensure a Sequence object can be created from a Katana string.
+        """
+        result = sequence.Sequence.fromString("/path/to/a/sequence.(1-5)%04d.ext")
+
+        self.assertEqual(
+            ("sequence.", 1, 5, ".ext", 4,),
+            (result.head, result.frameRange.start, result.frameRange.end, result.tail, result.padding),
+        )
+
+    def test_from_nukeExtended(self):
+        """ Ensure a Sequence object can be created from a Nuke 'extended' formatted string.
+        """
+        result = sequence.Sequence.fromString("/path/to/a/sequence.%04d.ext 1-5")
+
+        self.assertEqual(
+            ("sequence.", 1, 5, ".ext", 4,),
+            (result.head, result.frameRange.start, result.frameRange.end, result.tail, result.padding),
+        )
+
+    def test_from_rvExtended(self):
+        """ Ensure a Sequence object can be created from a RV 'extended' formatted string.
+        """
+        result = sequence.Sequence.fromString("/path/to/a/sequence.1-5@@@@.ext")
+
+        self.assertEqual(
+            ("sequence.", 1, 5, ".ext", 4,),
+            (result.head, result.frameRange.start, result.frameRange.end, result.tail, result.padding),
+        )
+
+    def test_from_padded_rvExtended(self):
+        """ Ensure a Sequence object can be created from a RV 'extended' formatted string.
+        """
+        result = sequence.Sequence.fromString("/path/to/a/sequence.00001-00005#.ext")
+
+        self.assertEqual(
+            ("sequence.", 1, 5, ".ext", 5,),
+            (result.head, result.frameRange.start, result.frameRange.end, result.tail, result.padding),
+        )
+
+    def test_from_alternative_rvExtended(self):
+        """ Ensure a Sequence object can be created from a RV 'extended' formatted string.
+        """
+        result = sequence.Sequence.fromString("/path/to/a/sequence.1-5@@@.ext")
+
+        self.assertEqual(
+            ("sequence.", 1, 5, ".ext", 3,),
+            (result.head, result.frameRange.start, result.frameRange.end, result.tail, result.padding,),
+        )
+
+    def test_from_legacy_player_explicit(self):
+        """ Ensure a Sequence object can be created from an alternative formatted string.
+        """
+        result = sequence.Sequence.fromString("/path/to/a/sequence.####.ext 1-5")
+
+        self.assertEqual(
+            ("sequence.", 1, 5, ".ext", 4,),
+            (result.head, result.frameRange.start, result.frameRange.end, result.tail, result.padding,),
+        )
+
+    def test_from_alternative_explicit_digits(self):
+        """ Ensure a Sequence object can be created from an alternative formatted string.
+        """
+        result = sequence.Sequence.fromString("/path/to/a/sequence.@@@.ext 1-5")
+
+        self.assertEqual(
+            ("sequence.", 1, 5, ".ext", 3,),
+            (result.head, result.frameRange.start, result.frameRange.end, result.tail, result.padding,),
+        )
+
+
+class TestFormatSequence(unittest.TestCase):
+    """ Test out the lite_media_core.path_utils.sequence.Sequence can be formatted correctly.
+    """
+
+    def setUp(self):
+        """ Set up testing class.
+        """
+        super(TestFormatSequence, self).setUp()
+        self._sequence = sequence.Sequence.fromString("sequence.1001-1002#.ext")
+
+    def test_predefined_houdini(self):
+        """ Ensure the sequence can be formatted to the string Houdini format.
+        """
+        self.assertEqual(
+            "sequence.$F.ext", self._sequence.format(sequence.PredefinedFormat.HOUDINI),
+        )
+
+    def test_predefined_houdini_alternative(self):
+        """ Ensure the sequence can be formatted to the string Houdini extended format.
+        """
+        with pytest.warns(DeprecationWarning) as warningList:
+            self.assertEqual(
+                "sequence.$F.ext",
+                self._sequence.format(sequence.PredefinedFormat.HOUDINI_ALTERNATIVE),
+            )
+        self.assertEqual(len(warningList), 1)
+
+    def test_predefined_ffmpeg(self):
+        """ Ensure the sequence can be formatted to the string FFmpeg format.
+        """
+        self.assertEqual(
+            "sequence.%d.ext", self._sequence.format(sequence.PredefinedFormat.FFMPEG),
+        )
+
+    def test_predefined_katana(self):
+        """ Ensure the sequence can be formatted to the string Katana format.
+        """
+        self.assertEqual(
+            "sequence.(1001-1002)%01d.ext", self._sequence.format(sequence.PredefinedFormat.KATANA),
+        )
+
+    def test_predefined_nuke(self):
+        """ Ensure the sequence can be formatted to the string Nuke format.
+        """
+        self.assertEqual(
+            "sequence.%d.ext", self._sequence.format(sequence.PredefinedFormat.NUKE),
+        )
+
+    def test_predefined_nukeExtended(self):
+        """ Ensure the sequence can be formatted to the string Nuke extended format.
+        """
+        self.assertEqual(
+            "sequence.%d.ext 1001-1002",
+            self._sequence.format(sequence.PredefinedFormat.NUKE_EXTENDED),
+        )
+
+    def test_predefined_rv(self):
+        """ Ensure the sequence can be formatted to the string RV format.
+        """
+        self.assertEqual(
+            "sequence.#.ext", self._sequence.format(sequence.PredefinedFormat.RV),
+        )
+
+    def test_predefined_rvExtended(self):
+        """ Ensure the sequence can be formatted to the string RV extended format.
+        """
+        self.assertEqual(
+            "sequence.1001-1002#.ext", self._sequence.format(sequence.PredefinedFormat.RV_EXTENDED),
+        )
+
+    def test_predefined_sprintf(self):
+        """ Ensure the sequence can be formatted to the string Houdini format.
+        """
+        self.assertEqual(
+            "sequence.%d.ext", self._sequence.format(sequence.PredefinedFormat.SPRINTF),
+        )
+
+    def test_predefined_legacy_hashtag(self):
+        """ Ensure the sequence can be formatted to the legacy hashtag format.
+        """
+        self.assertEqual(
+            "sequence.####.ext", self._sequence.format(sequence.PredefinedFormat.LEGACY_HASHTAG),
+        )
+
+    def test_predefined_legacy_hashtag_extended(self):
+        """ Ensure the sequence can be formatted to the legacy hashtag format.
+        """
+        self.assertEqual(
+            "sequence.####.ext 1001-1002",
+            self._sequence.format(sequence.PredefinedFormat.LEGACY_HASHTAG_EXTENDED),
+        )
+
+    def test_invalid_format(self):
+        """ Ensure an exception is raised when trying to use an invalid value.
+        """
+        with self.assertRaises(ValueError) as error:
+            self._sequence.format("an_invalid_format")
+
+        self.assertEqual("Unsupported format: 'an_invalid_format'", str(error.exception))
+
+
+class TestFormatSequenceLeadingZeros(unittest.TestCase):
+    """ Test out the lite_media_core.path_utils.sequence.Sequence with leading zeros can be formatted correctly.
+    """
+
+    def setUp(self):
+        """ Set up testing class.
+        """
+        super(TestFormatSequenceLeadingZeros, self).setUp()
+        self._sequence = sequence.Sequence.fromString("sequence.0998-1002#.ext")
+
+    def test_predefined_houdini(self):
+        """ Ensure the sequence can be formatted to the string Houdini format.
+        """
+        self.assertEqual(
+            "sequence.$F4.ext", self._sequence.format(sequence.PredefinedFormat.HOUDINI),
+        )
+
+    def test_predefined_houdini_alternative(self):
+        """ Ensure the sequence can be formatted to the string Houdini extended format.
+        This format is deprecated and here for compatibility only.
+        """
+        with pytest.warns(DeprecationWarning) as warningList:
+            self.assertEqual(
+                "sequence.$F4.ext",
+                self._sequence.format(sequence.PredefinedFormat.HOUDINI_ALTERNATIVE),
+            )
+        self.assertEqual(len(warningList), 1)
+
+    def test_predefined_ffmpeg(self):
+        """ Ensure the sequence can be formatted to the string FFmpeg format.
+        """
+        self.assertEqual(
+            "sequence.%04d.ext", self._sequence.format(sequence.PredefinedFormat.FFMPEG),
+        )
+
+    def test_predefined_katana(self):
+        """ Ensure the sequence can be formatted to the string Katana format.
+        """
+        self.assertEqual(
+            "sequence.(998-1002)%04d.ext", self._sequence.format(sequence.PredefinedFormat.KATANA),
+        )
+
+    def test_predefined_nuke(self):
+        """ Ensure the sequence can be formatted to the string Nuke format.
+        """
+        self.assertEqual(
+            "sequence.%04d.ext", self._sequence.format(sequence.PredefinedFormat.NUKE),
+        )
+
+    def test_predefined_nukeExtended(self):
+        """ Ensure the sequence can be formatted to the string Nuke extended format.
+        """
+        self.assertEqual(
+            "sequence.%04d.ext 998-1002",
+            self._sequence.format(sequence.PredefinedFormat.NUKE_EXTENDED),
+        )
+
+    def test_predefined_rv(self):
+        """ Ensure the sequence can be formatted to the string RV format.
+        """
+        self.assertEqual(
+            "sequence.#.ext", self._sequence.format(sequence.PredefinedFormat.RV),
+        )
+
+    def test_predefined_alternative_rv(self):
+        """ Ensure the sequence can be formatted to the alternative string RV format.
+        """
+        paddedSeq = sequence.Sequence.fromString("sequence.%06d.ext 1-10")
+        self.assertEqual(
+            "sequence.@@@@@@.ext", paddedSeq.format(sequence.PredefinedFormat.RV),
+        )
+
+    def test_predefined_rvExtended(self):
+        """ Ensure the sequence can be formatted to the string RV extended format.
+        """
+        self.assertEqual(
+            "sequence.0998-1002#.ext", self._sequence.format(sequence.PredefinedFormat.RV_EXTENDED),
+        )
+
+    def test_predefined_alternative_rvExtended(self):
+        """ Ensure the sequence can be formatted to the alternative string RV format.
+        """
+        paddedSeq = sequence.Sequence.fromString("sequence.%06d.ext 1-10")
+        self.assertEqual(
+            "sequence.000001-000010@@@@@@.ext",
+            paddedSeq.format(sequence.PredefinedFormat.RV_EXTENDED),
+        )
+
+    def test_predefined_sprintf(self):
+        """ Ensure the sequence can be formatted to the string Houdini format.
+        """
+        self.assertEqual(
+            "sequence.%04d.ext", self._sequence.format(sequence.PredefinedFormat.SPRINTF),
+        )
+
+    def test_predefined_legacy_hashtag(self):
+        """ Ensure the sequence can be formatted to the legacy hashtag format.
+        """
+        self.assertEqual(
+            "sequence.####.ext", self._sequence.format(sequence.PredefinedFormat.LEGACY_HASHTAG),
+        )
+
+    def test_predefined_legacy_hashtag_extended(self):
+        """ Ensure the sequence can be formatted to the legacy hashtag format.
+        """
+        self.assertEqual(
+            "sequence.####.ext 998-1002",
+            self._sequence.format(sequence.PredefinedFormat.LEGACY_HASHTAG_EXTENDED),
+        )

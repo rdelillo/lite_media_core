@@ -1,0 +1,42 @@
+# Additional mime-types.
+#
+# Use section below to register new mime-types, alphabetically ordered by mime-type/sub-mime-type.
+# mimeType/subMimeType          ext
+#
+# Note that 'custom' (prefixed by 'x-') mime-types are to be treated carefully, ideally we only want to
+# use standard mime-types registered by IANA (Internet Assigned Number Authority):
+# https://www.iana.org/assignments/media-types/media-types.xhtml
+# For non official IANA extensions, this can be used to know corresponding mime type:
+# https://www.filesuffix.com
+
+# Application
+application/json                json            # JSON file, https://www.iana.org/assignments/media-types/application/json
+application/mxf                 mxf             # Material eXchange Format file, https://www.iana.org/assignments/media-types/application/mxf
+application/x-arri              ari             # ARRIRAW format
+
+# Audio
+audio/mpeg3						mp3				# An mp3 audio
+
+# Image
+image/x-adobe-dng               dng             # Adobe Digital Raw Image
+image/x-canon-cr2               cr2             # Canon RAW 2 Image
+image/j2c                       j2c             # JPEG 2000 Bitmap Image
+image/jp2                       jp2             # JPEG 2000 Bitmap Image, https://www.iana.org/assignments/media-types/image/jp2
+image/jpx                       jpx             # JPEG 2000 Bitmap Image, https://www.iana.org/assignments/media-types/image/jpx
+image/x-dpx                     dpx             # Digital Picture Exchange File
+image/x-exr                     exr             # OpenEXR Image
+image/vnd.adobe.photoshop       psd             # Adobe Photoshop Image, https://www.iana.org/assignments/media-types/image/vnd.adobe.photoshop
+image/webp                      webp            # Google WebP image format
+
+# Text
+text/x-3dl                      3dl             # Discreet 3D LUT
+text/x-cc+xml                   cc              # Color Correction
+text/x-ccc+xml                  ccc             # Color Correction Collection
+text/x-cdl                      cdl             # Color Decision List
+text/x-csp                      csp             # Cinespace LUT
+text/x-cube                     cube            # Iridas LUT
+text/x-edl                      edl             # Edit Decision List
+
+# Video
+video/x-m4v                     m4v             # Apple iTune video file (similar to MPEG-4)
+video/webm                      webm            # Google WebM video format

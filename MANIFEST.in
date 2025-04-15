@@ -1,0 +1,2 @@
+graft lite_media_core
+global-exclude *.py[cod]
