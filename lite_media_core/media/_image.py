@@ -90,7 +90,7 @@ class ImageSequence(_imageMedia.ImageMedia, sequence.Sequence):
         :return: The image sequence file path.
         :rtype: str
         """
-        return self.format(sequence.PredefinedFormat.RV_EXTENDED)
+        return self.format(sequence.PredefinedFormat.LEGACY_HASHTAG_EXTENDED)
 
     @property
     def missing(self):

@@ -1,12 +1,9 @@
 """ FrameRange object
 """
-
-from __future__ import absolute_import
-
+import collections.abc
 import itertools
 import re
 
-import six
 import fileseq
 
 _FRAMERANGE_GROUP_REGEX = re.compile(r"(?P<start>\-?\d+)\-(?P<end>\-?\d+)(?:x(?P<step>\d+))?")
@@ -86,7 +83,7 @@ class FrameRange:
         :return: The frames of the FrameRange.
         :rtype: Generator[int]
         """
-        frames = set(six.moves.xrange(self._start, self._end + self._step, self._step)) - set(self._missing)
+        frames = set(range(self._start, self._end + self._step, self._step)) - set(self._missing)
         for frame in sorted(frames):
             yield frame
 
@@ -239,13 +236,13 @@ def _conformToFrames(value):
     if isinstance(value, int):
         return {value}
 
-    if isinstance(value, (six.text_type, six.binary_type)):
+    if isinstance(value, str):
         return set(FrameRange.fromString(value))
 
     if isinstance(value, (FrameRange, fileseq.FrameSet)):
         return set(value)
 
-    if isinstance(value, six.moves.collections_abc.Sequence):  # pylint: disable=no-member
+    if isinstance(value, collections.abc.Sequence):  # pylint: disable=no-member
         result = set()
         for val in value:
             result.update(_conformToFrames(val))

@@ -72,7 +72,7 @@ class TestImageSequence(unittest.TestCase):
         """ Ensure an ImageSequence object represents as string correctly.
         """
         self.assertEqual(
-            "<ImageSequence %r (image/png) offline>" % os.path.join(self.tempdir, "img.1001-1003#.png"),
+            "<ImageSequence %r (image/png) offline>" % os.path.join(self.tempdir, "img.####.png 1001-1003"),
             str(self.imgSequence)
         )
 
@@ -80,7 +80,7 @@ class TestImageSequence(unittest.TestCase):
         """ Ensure an ImageSequence object represents correctly.
         """
         self.assertEqual(
-            "<ImageSequence path='%s' (mimeType='image/png')>" % os.path.join(self.tempdir, "img.1001-1003#.png"),
+            "<ImageSequence path='%s' (mimeType='image/png')>" % os.path.join(self.tempdir, "img.####.png 1001-1003"),
             repr(self.imgSequence)
         )
 
@@ -88,7 +88,7 @@ class TestImageSequence(unittest.TestCase):
         """ Ensure the path from an ImageSequence is consistent.
         """
         self.assertEqual(
-            os.path.join(self.tempdir, "img.1001-1003#.png"),
+            os.path.join(self.tempdir, "img.####.png 1001-1003"),
             self.imgSequence.path
         )
 

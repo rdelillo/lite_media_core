@@ -93,7 +93,7 @@ class TestIdentifyFromFiles(unittest.TestCase):
         imgSeq, movie = mediaos.identifyFromFiles(filesList)  # pylint: disable=unbalanced-tuple-unpacking
 
         self.assertEqual(
-            (True, "sequence_img.01-02@@.png"),
+            (True, "sequence_img.##.png 1-2"),
             (isinstance(imgSeq, media.ImageSequence), imgSeq.path),
         )
         self.assertEqual(

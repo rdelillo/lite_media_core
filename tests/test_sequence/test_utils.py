@@ -1,10 +1,5 @@
 """ Test cases for the `lite_media_core.path_utils.sequence._utils.py` module.
 """
-
-# pylint: disable=too-many-public-methods
-
-from __future__ import absolute_import
-
 import unittest
 
 from lite_media_core.path_utils.sequence._utils import conformPath
@@ -89,16 +84,6 @@ class TestConformPath(unittest.TestCase):
         """
         self.assertEqual(
             conformPath("dir/img.%03d.exr [1-8, 10] ([2-3, 7])"), "dir/img.1,4-6,8,10@@@.exr",
-        )
-
-    def test_sprintf_extended_broken_framerange_broken_missing_extraneous_brackets(self,):
-        """ Test conforming of a path with extended broked missing frame with extraneous brackets.
-        This is an edge case for rdo_media_core.
-        https://bitbucket.rodeofx.com/projects/RDO/repos/rdo_media_core/browse/rdo_media_core/media/_image.py#142
-        sequencePath.format("%h%p%t %R ([%m])")  -> %m already add brackets
-        """
-        self.assertEqual(
-            conformPath("dir/img.%03d.exr [1-8, 10] ([[2-3, 7]])"), "dir/img.1,4-6,8,10@@@.exr",
         )
 
     def test_sprintf_contained_framerange_mismatch_padding(self):

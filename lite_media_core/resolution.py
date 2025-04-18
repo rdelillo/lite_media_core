@@ -1,23 +1,4 @@
 """ Resolution module.
-
-:Example:
-
->>> from lite_media_core import resolution
->>> res = resolution.Resolution(1920, 1080)
->>> str(res)
-'1920x1080'
->>> res.width
-1920
->>> res.height
-1080
->>> w, h = res ; assert (w, h) == (1920, 1080)
-True
->>> res.aspectRatio
-decimal.Decimal(1.777777777778)
->>> res.pixelAspectRatio
-1.0
->>> resolution.Resolution.fromString("1920x1080")
-resolution.Resolution(1920, 1080)
 """
 import decimal
 

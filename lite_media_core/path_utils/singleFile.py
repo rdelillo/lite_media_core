@@ -1,8 +1,5 @@
 """ Single file object.
 """
-
-from __future__ import absolute_import
-
 import os
 
 from lite_media_core.path_utils import sequence

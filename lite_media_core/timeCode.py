@@ -1,30 +1,7 @@
 """ Timecode handling.
-
-Tc   00:00:00:00    00:00:00:01    00:00:00:02    00:00:00:03
-          |--------------|--------------|-------------|
-Frames           1              2              3
-
-:Example:
->>> from lite_media_core import timeCode
->>> tc = timeCode.TimeCode("01:00:00:00", 24)  # 1 hour at 24fps
->>> str(tc)
-'01:00:00:00'
->>> tc.frameRate
-<FrameRate 24.0 fps Film>
->>> tc.frames
-86400
->>> tc2 = timeCode.TimeCode(50, 24)  # 50 frames at 24fps
->>> str(tc2)
-'00:00:02:02'
->>> tc2.seconds
-2.0833333333333335
->>> tc3 = timeCode.TimeCode.fromSeconds(3600, 24)  # 3600 seconds (1 hour) at 24fps
->>> str(tc3)
-'01:00:00:00'
 """
 import math
 import re
-import six
 import timecode as tcLib  # external lib
 
 from lite_media_core import rate
@@ -60,7 +37,7 @@ class TimeCode:
         # - different round logic with frames, (01:00:00:00, 24fps) = 86400 frames here (lib returns 86401)
         # - no millisecond based timecode
         # - no unit tests
-        if isinstance(value, six.string_types):
+        if isinstance(value, str):
             self._timecode = tcLib.Timecode(tcLibFrameRate, start_timecode=value)
             tcAsframes = math.ceil(self.seconds * float(self._frameRate))  # 1.01 frame is 2 frames
             self._frames = int(tcAsframes)
@@ -206,7 +183,7 @@ class TimeCode:
         :return: The Timecode object.
         :rtype: :class:`Timecode`
         """
-        if not isinstance(frameRate, (rate.FrameRate, rate.CustomFrameRate)):
+        if not isinstance(frameRate, (rate.FrameRate, rate.NonStandardFrameRate)):
             frameRate = rate.FrameRate(frameRate)
 
         valueInFrames = math.ceil(valueInSeconds * float(frameRate))
@@ -225,18 +202,18 @@ def _checkTcParameters(tcValue, tcRate):
     :raise TimecodeException: When the input parameters are incorrect.
     """
     # Check timecode input types.
-    if not isinstance(tcValue, six.string_types) and not isinstance(tcValue, int):
+    if not isinstance(tcValue, str) and not isinstance(tcValue, int):
         raise TimecodeException("Invalid timecode value %r, should be int or str." % tcValue)
 
     # Check timecode frame rate.
-    if not isinstance(tcRate, (rate.FrameRate, rate.CustomFrameRate)):
+    if not isinstance(tcRate, (rate.FrameRate, rate.NonStandardFrameRate)):
         try:
             tcRate = rate.FrameRate.fromCustomRate(tcRate)
         except rate.FrameRateException as error:
             raise TimecodeException("Invalid frame rate for timecode: %s." % error) from error
 
     # Check timecode string value.
-    if isinstance(tcValue, six.string_types) and not isValidTimecodeStr(tcValue, frameRate=tcRate):
+    if isinstance(tcValue, str) and not isValidTimecodeStr(tcValue, frameRate=tcRate):
 
         # Attempt to convert the timecode string from a milliseconds based formatting.
         try:

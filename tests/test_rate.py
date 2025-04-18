@@ -99,17 +99,17 @@ class TestFrameRate(unittest.TestCase):
         )
 
 
-class TestCustomFrameRate(unittest.TestCase):
-    """ Test custom frame rate usage.
+class TestNonStandardFrameRate(unittest.TestCase):
+    """ Test non-standard frame rate usage.
     """
-    def test_createCustomRate(self):
-        """ Ensure a custom frame rate object can be created from the FrameRate factory.
+    def test_createRate(self):
+        """ Ensure a non-standard rate object can be created from the FrameRate factory.
         """
         customRate = rate.FrameRate.fromCustomRate(12.0)  # non-standard frame rate
-        self.assertTrue(isinstance(customRate, rate.CustomFrameRate))
+        self.assertTrue(isinstance(customRate, rate.NonStandardFrameRate))
 
     def test_representation(self):
         """ Ensure a custom frame rate object can be represented.
         """
         customRate = rate.FrameRate.fromCustomRate(33.33)  # non-standard frame rate
-        self.assertEqual("<CustomFrameRate 33.33 fps custom rate>", repr(customRate))
+        self.assertEqual("<NonStandardFrameRate 33.33 fps custom rate>", repr(customRate))

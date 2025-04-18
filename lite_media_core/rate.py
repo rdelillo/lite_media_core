@@ -1,22 +1,10 @@
 """ Rate module.
-
-:Example:
-
->>> from lite_media_core import rate
->>> frameRate = rate.FrameRate("24")
->>> str(frameRate)
-'24.0 fps'
->>> repr(frameRate)
-'<FrameRate 24.0 fps Film>'
->>> customFrameRate = rate.FrameRate.fromCustomRate(11.1)
->>> repr(customRate)
-'<CustomFrameRate 11.1 fps custom rate>'
 """
 import abc
 import decimal
 
 
-# Technically any speed could be used as a video frame rate. This is true with the latest media players.
+# Technically any speed can be used as a video frame rate. This is true with the latest media players.
 # However before the industry went digital, it was shot on film and so it kept some standards from analogical
 # times. The following standards are the most common ones from the industry:
 # http://documentation.apple.com/en/finalcutpro/usermanual/index.html#chapter=D%26section=4%26tasks=true
@@ -138,17 +126,17 @@ class FrameRate(_AbstractFrameRate):
         :param rate: The rate value.
         :type rate: str or float or int or decimal.Decimal
         :return: The frame rate object.
-        :rtype: :class:`FrameRate` or :class:`CustomFrameRate`
+        :rtype: :class:`FrameRate` or :class:`NonStandardFrameRate`
         """
         try:
             return cls(rate)
 
         except FrameRateException:
-            return CustomFrameRate(rate, name="custom rate")
+            return NonStandardFrameRate(rate, name="custom rate")
 
 
-class CustomFrameRate(_AbstractFrameRate):
-    """ Custom frame rates handling.
+class NonStandardFrameRate(_AbstractFrameRate):
+    """ Non-standard frame rates handling.
     """
 
 

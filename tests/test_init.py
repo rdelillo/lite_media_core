@@ -1,8 +1,5 @@
 """ Test out lite_media_core.path_utils.__init__ module.
 """
-
-from __future__ import absolute_import
-
 import unittest
 
 import lite_media_core.path_utils

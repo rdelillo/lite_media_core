@@ -5,16 +5,26 @@ import os
 import tempfile
 import sys
 
-import requests
-import validators
-import yt_dlp
-
 from lite_media_core import rate as _rate
 from lite_media_core import resolution as _resolution
 from lite_media_core import timeCode as _timeCode
 from lite_media_core.path_utils import sequence as _sequence
 from lite_media_core.media import _media
 from lite_media_core.media import _audio
+
+# Ensure lite_media_core was installed with the
+# "embedded_media" extra requires. We do not want
+# those dependencies most of the time.
+try:
+    import requests
+    import validators
+    import yt_dlp
+
+except ModuleNotFoundError:
+    _IS_IMPORTED = False
+
+else:
+    _IS_IMPORTED = True
 
 
 class UnsupportedUrl(_media.UnsupportedMimeType):
@@ -53,12 +63,24 @@ class EmbeddedMedia(_media.Media):
             :param str mimeType: An optional media mime-type.
             :raise UnsupportedMimeType: When the provided path is not a video media.
         """
+        self._check_available()
         if not validators.url(url):
             raise _media.UnsupportedMimeType(
-                'Cannot create an EmbeddedMedia from invalid url: %r'
-                % url)
+                f'Cannot create an EmbeddedMedia from invalid url: {url}.'
+            )
 
         super().__init__(url, mimeType=mimeType)
+
+    @classmethod
+    def _check_available(cls):
+        """
+            :raise RuntimeError: When the requirements for embedded are not found.
+        """
+        if not _IS_IMPORTED:
+            raise RuntimeError(
+                f"Cannot create a {cls} media, ensure that lite_media_core "
+                "is installed with the 'embedded_media' extra requires."
+            )
 
 
 class EmbeddedAudio(EmbeddedMedia):
@@ -171,6 +193,7 @@ class EmbeddedVideo(EmbeddedMedia):
             :param bool use_proxy: Shall it use the proxy or not.
             :raise UnsupportedMimeType: When the provided path is not a video media.
         """
+        self._check_available()
         options = {
             "playlist_items": "1",
             "color": {"stderr": "no_color", "stdout": "no_color"},

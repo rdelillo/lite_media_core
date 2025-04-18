@@ -30,7 +30,7 @@ def walk(top, topdown=True, onerror=None, followlinks=False):
 
         for item in items:
             if isinstance(item, lite_media_core.path_utils.sequence.Sequence):
-                path = item.format(lite_media_core.path_utils.sequence.PredefinedFormat.RV_EXTENDED)
+                path = item.format(lite_media_core.path_utils.sequence.PredefinedFormat.LEGACY_HASHTAG_EXTENDED)
             else:
                 path = os.path.join(root, item)
 
@@ -62,7 +62,7 @@ def identifyFromFiles(files):
     for item in items:
 
         if isinstance(item, lite_media_core.path_utils.Sequence):
-            path = item.format(lite_media_core.path_utils.sequence.PredefinedFormat.RV_EXTENDED)
+            path = item.format(lite_media_core.path_utils.sequence.PredefinedFormat.LEGACY_HASHTAG_EXTENDED)
         else:
             path = str(item)
 

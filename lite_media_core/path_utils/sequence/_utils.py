@@ -1,8 +1,5 @@
 """ Helper methods for fileseq path conforming.
 """
-
-from __future__ import absolute_import
-
 import re
 
 import fileseq

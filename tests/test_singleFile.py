@@ -1,7 +1,5 @@
 """ Test out the lite_media_core.path_utils.singleFile module.
 """
-from __future__ import absolute_import
-
 import unittest
 import os
 

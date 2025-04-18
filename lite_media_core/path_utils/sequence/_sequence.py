@@ -1,12 +1,6 @@
 """ Sequence object.
 """
-
-from __future__ import absolute_import
-
 import os
-import fnmatch
-import glob
-
 import fileseq
 
 from lite_media_core.path_utils.sequence import _formats
@@ -21,11 +15,6 @@ class SequenceError(Exception):
 
 class NoFrameRangeError(SequenceError):
     """ Raised when we try to access frame range information in a sequence with no frame range.
-    """
-
-
-class FrozenSequenceError(SequenceError):
-    """ Raised when trying to modify an immutable Sequence.
     """
 
 
@@ -44,18 +33,16 @@ class Sequence:
         if not isinstance(fileSeqObj, (Sequence, fileseq.FileSequence)):
             raise ValueError("Cannot initialize a Sequence from %r." % fileSeqObj)
 
-        # Allow a sequence to be created from frozen sequence and vice-versa
         if isinstance(fileSeqObj, Sequence):
             fileSeqObj = fileSeqObj._data
 
-        # There are some FileSequence object we don't support (ex: single file without any frame info)
         try:
             _utils.validateFileSequence(fileSeqObj)
+
         except ValueError as error:
             raise ValueError("Cannot initialize a Sequence from %r: %s" % (fileSeqObj, error)) from error
 
         self._singleFrame = len(fileSeqObj.frameSet()) == 1
-
         self._data = fileSeqObj
 
     def __iter__(self):
@@ -113,7 +100,7 @@ class Sequence:
         :return: The string representation of the Sequence.
         :rtype: str
         """
-        return "<%s '%s'>" % (self.__class__.__name__, self.format(_formats.PredefinedFormat.NUKE_EXTENDED),)
+        return "<%s '%s'>" % (self.__class__.__name__, self.format(_formats.PredefinedFormat.LEGACY_HASHTAG_EXTENDED),)
 
     @property
     def end(self):
@@ -227,9 +214,6 @@ class Sequence:
         :rtype: str
         :raises ValueError: If the frame number is not part of the sequence.
         """
-        # TO REVISIT: for now we consider explicit missing frames as 'invalid'.
-        # An explicit missing frame means that the frame is purposefully not part
-        # of the sequence, this might not be related to the the path existing on disk or not.
         if frameNumber not in self._data.frameSet():
             raise ValueError("Invalid frame number: %r." % frameNumber)
 
@@ -253,44 +237,6 @@ class Sequence:
             raise ValueError("Path have no frame range information: %r" % strData)
 
         return cls(fileSeqSequence)
-
-    @classmethod
-    def discoverFromDisk(cls, strData):
-        """ Analyse files on disk to match a sequence, extended (with framerange) or not.
-
-        :param str strData: The data to initialize the Sequence from.
-        :return: A list of created Sequence object.
-        :rtype: list(:class:`Sequence`)
-        """
-        # Start by using glob to match unix patterns
-        matches = glob.glob(strData)
-        if matches:
-            for sequence in cls.iterSequences(matches):
-                yield sequence
-            return
-
-        # Do not consider deprecated formats
-        formats = set(_formats.PredefinedFormat) - _formats.DEPRECATED_FORMATS
-
-        # We will explore the sequences under the provided path directory and see it any match.
-        # There can be multiple directory to explore if UNIX patterns are used. (ex: '/a/*/c/*.exr')
-        directories = glob.iglob(os.path.dirname(strData) + os.sep)
-        for directory in directories:
-            for sequence in cls.iterSequences(directory):
-                for formatStr in formats:
-                    guess = sequence.format(formatStr)
-                    if fnmatch.fnmatch(guess, strData):
-                        yield sequence
-                        break
-
-                # Handle single-frame sequences.
-                else:
-                    if (
-                        len(sequence) == 1
-                        and strData.startswith(os.path.join(directory, sequence.head))
-                        and strData.endswith(sequence.tail)
-                    ):
-                        yield sequence
 
     @classmethod
     def fromList(cls, listData, singleEntry=True):
@@ -338,79 +284,3 @@ class Sequence:
         Sequence.getSequences(['file.1.ext', 'file.2.ext', 'aa.ext'])
         """
         return list(cls.iterSequences(data))
-
-    def addFrames(self, *frames):
-        """ Add frames to the sequence
-
-        :param frames: The frames to add
-        :type frames: tuple
-        """
-        frameSet = self._data.frameSet()
-        frames = set(_frameRange.FrameRange.fromData(frames))
-        self._data.setFrameSet(frameSet | frames)
-
-    def removeFrames(self, *frames):
-        """ Remove frames from the sequence
-
-        :param frames: The frames to add
-        :type frames: tuple
-        """
-        frameSet = self._data.frameSet()
-        frames = set(_frameRange.FrameRange.fromData(frames))
-        self._data.setFrameRange(frameSet - frames)
-
-    def setFrames(self, *frames):
-        """ Set the sequence frames
-
-        :param frames: The frames to set
-        :type frames: tuple
-        """
-        frames = set(_frameRange.FrameRange.fromData(frames))
-        self._data.setFrameRange(frames)
-
-    def setPadding(self, padding):
-        """ Change the sequence padding
-
-        :param int padding: The new padding.
-        """
-        self._data.setPadding(fileseq.getPaddingChars(padding))
-
-
-class FrozenSequence(Sequence):
-    """ An immutable Sequence.
-    """
-
-    def addFrames(self, *frames):
-        """ Add frames to the sequence
-
-        :param frames: The frames to add
-        :type frames: tuple
-        :raises FrozenSequenceError: Always
-        """
-        raise FrozenSequenceError("Cannot modify a frozen sequence.")
-
-    def removeFrames(self, *frames):
-        """ Remove frames from the sequence
-
-        :param frames: The frames to add
-        :type frames: tuple
-        :raises FrozenSequenceError: Always
-        """
-        raise FrozenSequenceError("Cannot modify a frozen sequence.")
-
-    def setFrames(self, *frames):
-        """ Set the sequence frames
-
-        :param frames: The frames to set
-        :type frames: tuple
-        :raises FrozenSequenceError: Always
-        """
-        raise FrozenSequenceError("Cannot modify a frozen sequence.")
-
-    def setPadding(self, padding):
-        """ Change the sequence padding
-
-        :param int padding: The new padding.
-        :raises FrozenSequenceError: Always
-        """
-        raise FrozenSequenceError("Cannot modify a frozen sequence.")

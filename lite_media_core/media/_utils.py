@@ -26,7 +26,7 @@ def chunkImageSequence(imageSequence, chunkSize):
             mediaPath, = chunk
         else:
             sequence = _sequence.Sequence.fromList(list(chunk))
-            mediaPath = sequence.format(_sequence.PredefinedFormat.NUKE_EXTENDED)
+            mediaPath = sequence.format(_sequence.PredefinedFormat.LEGACY_HASHTAG_EXTENDED)
 
         chunkSequences.append(_media.Media.fromPath(mediaPath))
 

@@ -3,9 +3,6 @@
 
 from __future__ import absolute_import
 
-import six
-
-
 from lite_media_core.path_utils.sequence import Sequence, _utils
 from lite_media_core.path_utils.singleFile import SingleFile
 
@@ -37,7 +34,7 @@ def getSequences(data):
     getSequences('/path/to/a/directory/to/parse')
     getSequences(['file.1.ext', 'file.2.ext', 'aa.ext'])
     """
-    data = {data} if isinstance(data, six.string_types) else set(data)
+    data = {data} if isinstance(data, str) else set(data)
     fileSeqObjs, remains = _utils.findSequencesInList(data)
 
     for fileSeqObj in fileSeqObjs:
