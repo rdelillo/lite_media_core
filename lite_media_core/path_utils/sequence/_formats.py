@@ -2,7 +2,6 @@
 """
 import enum
 
-
 class PredefinedFormat(enum.Enum):
     """ Predefined string formats based on common applications and usage.
     """
@@ -11,9 +10,11 @@ class PredefinedFormat(enum.Enum):
     LEGACY_HASHTAG_EXTENDED = 3
     FFMPEG = 4
 
+
 _EXTENDED_FORMATS = (
     PredefinedFormat.LEGACY_HASHTAG_EXTENDED,
 )
+
 
 PREDEFINED_FORMATS = {
     (PredefinedFormat.SPRINTF, False,): "{{dirname}}{{basename}}%d{{extension}}",  # files.%d.ext
@@ -25,43 +26,37 @@ PREDEFINED_FORMATS = {
 }
 
 
-def formatSequence(sequence, predefinedFormat):
+def format_sequence(sequence: object, predefined_format: PredefinedFormat) -> str:
     """
-    :param sequence: The sequence to format.
-    :type sequence: :class:`lite_media_core.path_utils.sequence.Sequence`
-    :param predefinedFormat: The predefined format to use for the string formatting.
-    :type predefinedFormat: :class:`PredefinedFormat`
-    :return: The formatted sequence as string.
-    :rtype: str
     :raises ValueError: If the provided pyseq is incompatible with the format.
     """
-    # We won't allow a sequence without any frame range to be formated to an extended format.
-    if not sequence.hasFrameRange and predefinedFormat in _EXTENDED_FORMATS:
-        raise ValueError("Could not format sequence without a frame range to an extended format.")
+    # Do not allow a sequence without any frame range to be formated to an extended format.
+    if not sequence.has_frame_range and predefinedFormat in _EXTENDED_FORMATS:
+        raise ValueError(f"Cannot format sequence without a frame range to {predefined_format}.")
 
     # Resolve template to use
     try:
-        template = PREDEFINED_FORMATS[predefinedFormat]
+        template = PREDEFINED_FORMATS[predefined_format]
     except KeyError:
         try:
-            template = PREDEFINED_FORMATS[(predefinedFormat, sequence.hasLeadingZeros)]
+            template = PREDEFINED_FORMATS[(predefined_format, sequence.has_leading_zeros)]
         except KeyError as error:
-            raise ValueError("Unsupported format: %r" % predefinedFormat) from error
+            raise ValueError(f"Unsupported format: {predefined_format}.") from error
 
-    pySeqSequence = sequence._data  # pylint: disable=protected-access
-    sequencePadding = sequence.padding
-    sequenceStart = pySeqSequence.start()
-    sequenceEnd = pySeqSequence.end()
+    file_seq_sequence = sequence._data  # pylint: disable=protected-access
+    sequence_padding = sequence.padding
+    sequence_start = file_seq_sequence.start()
+    sequence_end = file_seq_sequence.end()
 
-    return pySeqSequence.format(
+    return file_seq_sequence.format(
         template.format(
-            zfill=pySeqSequence.zfill(),
-            padding=sequence.padding,
-            frameRange="%s-%s" % (sequenceStart, sequenceEnd),
-            start=str(sequenceStart),
-            startPadded=str(sequenceStart).zfill(sequencePadding),
-            end=str(sequenceEnd),
-            endPadded=str(sequenceEnd).zfill(sequencePadding),
+            zfill=file_seq_sequence.zfill(),
+            padding=sequence_padding,
+            frameRange="%s-%s" % (sequence_start, sequence_end),
+            start=str(sequence_start),
+            startPadded=str(sequence_start).zfill(sequence_padding),
+            end=str(sequence_end),
+            endPadded=str(sequence_end).zfill(sequence_padding),
             null="",
         )
     )

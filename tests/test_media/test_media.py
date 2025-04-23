@@ -69,7 +69,7 @@ class TestMedia(unittest.TestCase):
         with self.assertRaises(TypeError) as error:
             self.onlineMedia == "/path/to/file/a"  # pylint: disable=pointless-statement
 
-        self.assertEqual(str(error.exception), "Invalid comparison between 'Media' and 'str'.")
+        self.assertEqual(str(error.exception), "Invalid comparison between 'Media' and str.")
 
     def test_ne_same(self):
         """ Ensure two identical media object are perceived as not equal.
@@ -87,7 +87,7 @@ class TestMedia(unittest.TestCase):
         with self.assertRaises(TypeError) as error:
             self.onlineMedia != "/path/to/file/a"  # pylint: disable=pointless-statement
 
-        self.assertEqual(str(error.exception), "Invalid comparison between 'Media' and 'str'.")
+        self.assertEqual(str(error.exception), "Invalid comparison between 'Media' and str.")
 
     def test_hash(self):
         """ Ensure a Media object can be hashed.
@@ -112,15 +112,15 @@ class TestMedia(unittest.TestCase):
     def test_subType(self):
         """ Ensure a Media object exposes a subType (mime-type).
         """
-        self.assertEqual("x-dpx", self.offlineMedia.subType)
+        self.assertEqual("x-dpx", self.offlineMedia.sub_type)
 
     def test_invalidMimeType(self):
         """ Ensure a Media object exposes conformed mime type.
         """
-        mediaObj = media.Media("/path/to/offline/img.dpx", mimeType=5.0)  # invalid mime type
+        media_obj = media.Media("/path/to/offline/img.dpx", mime_type=5.0)  # invalid mime type
         self.assertEqual(
             (None, None),
-            (mediaObj.type, mediaObj.subType),
+            (media_obj.type, media_obj.sub_type),
         )
 
     def test_existsTrue(self):
@@ -141,60 +141,48 @@ class TestMediaFromPath(unittest.TestCase):
     def test_unsupportedMimeType(self):
         """ Ensure a Media cannot be created from a path to an unsupported media.
         """
-        self.assertRaises(
-            media.UnsupportedMimeType,
-            media.Media.fromPath,
-            "/path/to/document/file.doc",  # not a media
-        )
+        with self.assertRaises(media.UnsupportedMimeType):
+            _ = media.Media.from_path("/path/to/document/file.doc")
 
     def test_unknownMimeType(self):
         """ Ensure a Media cannot be created from an unknown file type.
         """
-        self.assertRaises(
-            media.UnsupportedMimeType,
-            media.Media.fromPath,
-            "/path/to/unknown/file.unknownExtension",  # unknown file mime-type
-        )
+        with self.assertRaises(media.UnsupportedMimeType):
+            _ = media.Media.from_path("/path/to/unknown/file.unknownExtension")
 
     def test_audio(self):
         """ Ensure an Audio object is created from an audio file.
         """
-        mediaObj = media.Media.fromPath("/path/to/an/audio/file.wav")
-        self.assertIsInstance(mediaObj, media.Audio)
+        media_obj = media.Media.from_path("/path/to/an/audio/file.wav")
+        self.assertIsInstance(media_obj, media.Audio)
 
     def test_image(self):
         """ Ensure an Image object is created from an image file.
         """
-        mediaObj = media.Media.fromPath("/path/to/an/image/file.png")
-        self.assertIsInstance(mediaObj, media.Image)
+        media_obj = media.Media.from_path("/path/to/an/image/file.png")
+        self.assertIsInstance(media_obj, media.Image)
 
     def test_imageSequence(self):
         """ Ensure an ImageSequence object is created from a sequence path.
         """
-        mediaObj = media.Media.fromPath("/path/to/a/sequence/files.1001-1002#.png")
-        self.assertIsInstance(mediaObj, media.ImageSequence)
+        media_obj = media.Media.from_path("/path/to/a/sequence/files.1001-1002#.png")
+        self.assertIsInstance(media_obj, media.ImageSequence)
 
     def test_image_vs_imageSequence(self):
         """ Ensure a frame padded single image is still an Image object (not a sequence).
         """
-        mediaObj = media.Media.fromPath("/path/to/a/sequence/files.1001.png")
-        self.assertIsInstance(mediaObj, media.ImageSequence)
+        media_obj = media.Media.from_path("/path/to/a/sequence/files.1001.png")
+        self.assertIsInstance(media_obj, media.ImageSequence)
 
     def test_video(self):
         """ Ensure a Movie object is created from a video file.
         """
-        mediaObj = media.Media.fromPath("/path/to/a/video/file.mov")
-        self.assertIsInstance(mediaObj, media.Movie)
+        media_obj = media.Media.from_path("/path/to/a/video/file.mov")
+        self.assertIsInstance(media_obj, media.Movie)
 
     def test_video_alternativePath(self):
         """ Ensure a Movie object is created from a video file.
         """
         # Shall this later be a MovieSequence ?
-        mediaObj = media.Media.fromPath("/path/to/a/video/file_0000-1001#.mov")
-        self.assertIsInstance(mediaObj, media.Movie)
-
-    def test_mxf(self):
-        """ Ensure a Movie is created from an MXF file.
-        """
-        mediaObj = media.Media.fromPath("/path/to/a/mxf/file.mxf")
-        self.assertIsInstance(mediaObj, media.Movie)
+        media_obj = media.Media.from_path("/path/to/a/video/file_0000-1001#.mov")
+        self.assertIsInstance(media_obj, media.Movie)

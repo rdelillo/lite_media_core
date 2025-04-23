@@ -2,7 +2,7 @@
 """
 import unittest
 
-from lite_media_core._mediaInfo import _base
+from lite_media_core._media_info import _base
 
 
 class TestAbstractRegexIdentifier(unittest.TestCase):
@@ -51,8 +51,7 @@ class TestAbstractRegexIdentifier(unittest.TestCase):
     def test_getMediaInformation_abstract(self):
         """ Ensure AbstractRegexIdentifier.getMediaInformation needs to be implemented.
         """
-        self.assertRaises(
-            NotImplementedError,
-            _base.AbstractRegexIdentifier.getMediaInformation,
-            "/path/to/media/file",
-        )
+        with self.assertRaises(NotImplementedError):
+            _ = _base.AbstractRegexIdentifier.getMediaInformation(
+                "/path/to/media/file",
+            )

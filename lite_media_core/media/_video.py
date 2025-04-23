@@ -1,64 +1,62 @@
 """ Video module.
 """
-import lite_media_core.path_utils
+from typing import Optional
 
-from lite_media_core.media import _imageMedia
+from lite_media_core.media import _image_media
 from lite_media_core.media import UnsupportedMimeType
+from lite_media_core.path_utils import sequence
+from lite_media_core import rate
 from lite_media_core import timeCode
 
 
-class Movie(_imageMedia.ImageMedia):
+class Movie(_image_media.ImageMedia):
     """ Movie media.
     """
-    registeredMimeTypes = ("video", "application/mxf")
 
-    def __init__(self, path, mimeType=None):
+    registered_mime_types = ("video", "application/mxf")
+
+    def __init__(self, path: str, mime_type: str = None):
         """ Initialize a new Movie object.
 
-        :param str path: The media file path.
-        :param str mimeType: An optional media mime-type.
         :raise UnsupportedMimeType: When the provided path is not a video media.
         """
-        super().__init__(path, mimeType=mimeType)
+        super().__init__(path, mime_type=mime_type)
 
-        if self.type not in Movie.registeredMimeTypes and self._mimeType not in Movie.registeredMimeTypes:
-            raise UnsupportedMimeType("Cannot create a Movie media from %s (%s) "
-                "valid types are %s." % (path, self.type, Movie.registeredMimeTypes))
+        if (
+            self.type not in Movie.registered_mime_types
+            and self._mime_type not in Movie.registered_mime_types
+        ):
+            raise UnsupportedMimeType(
+                f"Cannot create a Movie media from {path} ({self.type}) "
+                f"valid types are {Movie.registered_mime_types}."
+            )
 
     @property
-    def codec(self):
+    def codec(self) -> str:
+        """ The video codec.
         """
-        :return: The video codec.
-        :rtype: str
-        """
-        self._setMediaInformation()
+        self._set_media_information()
         return self._info["codec"]
 
     @property
-    def framerate(self):
+    def framerate(self) -> rate.FrameRate:
+        """ The movie frame rate.
         """
-        :return: The movie frame rate.
-        :rtype: :class:`lite_media_core.rate.FrameRate`
-        """
-        return self.duration.frameRate
+        return self.duration.frame_rate
 
     @property
-    def duration(self):
+    def duration(self) -> timeCode.TimeCode:
+        """ The movie duration.
         """
-        :return: The movie frame count duration.
-        :rtype: :class:`lite_media_core.timeCode.TimeCode`
-        """
-        self._setMediaInformation()
+        self._set_media_information()
         tcIn = int(self._info['frames']) if self._info['frames'] else self._info['duration']
         return timeCode.TimeCode(tcIn, self._info["frameRate"])
 
     @property
-    def timeCode(self):
+    def timecode(self) -> Optional[timeCode.TimeCode]:
+        """ An embedded timecode in the Movie or None.
         """
-        :return: An embedded timecode in the Movie or None.
-        :rtype: :class:`lite_media_core.timeCode.TimeCode`
-        """
-        self._setMediaInformation()
+        self._set_media_information()
         if self._info.get("timecode"):
             frameRate = self._info.get("tcFrameRate") or self._info["frameRate"]
             return timeCode.TimeCode(self._info["timecode"], frameRate)
@@ -66,13 +64,11 @@ class Movie(_imageMedia.ImageMedia):
         return None
 
     @property
-    def frameRange(self):
+    def frame_range(self) -> sequence.FrameRange:
+        """ The video frame range.
         """
-        :return: The video frame range.
-        :rtype: :class:`lite_media_core.path_utils.sequence.FrameRange`
-        """
-        startTc = self.timeCode or 1  # default frame is 1
-        return lite_media_core.path_utils.sequence.FrameRange(
-            int(startTc),
-            int(startTc) + int(self.duration) - 1,  # 3 frames = 1-3
+        start_tc = self.timecode or 1  # default frame is 1
+        return sequence.FrameRange(
+            int(start_tc),
+            int(start_tc) + int(self.duration) - 1,
         )

@@ -6,12 +6,11 @@ import shutil
 import tempfile
 import unittest
 
-import lite_media_core.path_utils
-
 from lite_media_core import media
+from lite_media_core import path_utils
 from lite_media_core.media import _image
 
-mediaPath = _mediaPath = os.path.join(
+media_path = _mediaPath = os.path.join(
     os.path.dirname(__file__),
     "..",
     "resources",
@@ -22,14 +21,11 @@ mediaPath = _mediaPath = os.path.join(
 class TestImage(unittest.TestCase):
     """ Test lite_media_core.media.Image class.
     """
-    def test_failsNotFromImage(self):
+    def test_fails_not_from_Image(self):
         """ Ensure an Image object fails when not created from an image file.
         """
-        self.assertRaises(
-            media.UnsupportedMimeType,
-            media.Image,
-            "/path/to/a/video.mov",
-        )
+        with self.assertRaises(media.UnsupportedMimeType):
+            _ = media.Image("/path/to/a/video.mov")
 
 
 class TestImageSequence(unittest.TestCase):
@@ -42,13 +38,13 @@ class TestImageSequence(unittest.TestCase):
 
         # Prepare a temporary image sequence.
         self.tempdir = tempfile.gettempdir()
-        self.imgSequence = media.ImageSequence(os.path.join(self.tempdir, "img.1001-1003#.png"))
+        self.img_sequence = media.ImageSequence(os.path.join(self.tempdir, "img.1001-1003#.png"))
 
     def test_initializeFromSequence(self):
         """ Validate we can initialize an ImageSequence from a sequence object and that the
         ImageSequence reflect the original Sequence.
         """
-        sequence = lite_media_core.path_utils.sequence.Sequence.fromString(
+        sequence = path_utils.sequence.Sequence.from_string(
             os.path.join(self.tempdir, "img.1001-1003#.png")
         )
         inst = media.ImageSequence(sequence)
@@ -62,18 +58,16 @@ class TestImageSequence(unittest.TestCase):
     def test_initializeNotFromSequence_fails(self):
         """ Ensure cannot create an ImageSequence media from a none-sequence media path.
         """
-        self.assertRaises(
-            ValueError,
-            media.ImageSequence,
-            "/path/to/a/single/image.png",
-        )
+        with self.assertRaises(ValueError):
+            _ = media.ImageSequence("/path/to/a/single/image.png")
 
     def test_representAsStr(self):
         """ Ensure an ImageSequence object represents as string correctly.
         """
+        out_path = os.path.join(self.tempdir, "img.####.png 1001-1003")
         self.assertEqual(
-            "<ImageSequence %r (image/png) offline>" % os.path.join(self.tempdir, "img.####.png 1001-1003"),
-            str(self.imgSequence)
+            f"<ImageSequence '{out_path}' (image/png) offline>",
+            str(self.img_sequence)
         )
 
     def test_represent(self):
@@ -81,7 +75,7 @@ class TestImageSequence(unittest.TestCase):
         """
         self.assertEqual(
             "<ImageSequence path='%s' (mimeType='image/png')>" % os.path.join(self.tempdir, "img.####.png 1001-1003"),
-            repr(self.imgSequence)
+            repr(self.img_sequence)
         )
 
     def test_path(self):
@@ -89,14 +83,14 @@ class TestImageSequence(unittest.TestCase):
         """
         self.assertEqual(
             os.path.join(self.tempdir, "img.####.png 1001-1003"),
-            self.imgSequence.path
+            self.img_sequence.path
         )
 
     def test_frameRange(self):
         """ Ensure the frame range can be retrieved from an ImageSequence.
         """
-        frameRange = lite_media_core.path_utils.sequence.FrameRange(1001, 1003)
-        self.assertEqual(frameRange, self.imgSequence.frameRange)
+        frame_range = path_utils.sequence.FrameRange(1001, 1003)
+        self.assertEqual(frame_range, self.img_sequence.frame_range)
 
     def test_invalidFrameRange(self):
         """ Ensure trying to access a frame range from an none-existing ImageSequence.
@@ -107,7 +101,7 @@ class TestImageSequence(unittest.TestCase):
     def test_isValid(self):
         """ Ensure a sequence can be validated. More test in utils testing class.
         """
-        self.assertTrue(self.imgSequence.validate())
+        self.assertTrue(self.img_sequence.validate())
 
     def test_attributesLinkToFirstFrame(self):
         """ Ensure that the basic media attributes link to the first frame.
@@ -115,17 +109,17 @@ class TestImageSequence(unittest.TestCase):
         # Copy required image so they are online.
         for idx in range(1001, 1003):
             shutil.copy(
-                os.path.join(mediaPath, "img.png"),
+                os.path.join(media_path, "img.png"),
                 os.path.join(self.tempdir, "img.%d.png" % idx),
             )
 
-        firstFrameMedia = _image.Image(os.path.join(self.tempdir, "img.1001.png"))
-        imgSequence = media.ImageSequence(os.path.join(self.tempdir, "img.1001-1002#.png"))
+        first_frame = _image.Image(os.path.join(self.tempdir, "img.1001.png"))
+        img_sequence = media.ImageSequence(os.path.join(self.tempdir, "img.1001-1002#.png"))
 
         try:
             self.assertEqual(
-                (firstFrameMedia.resolution, firstFrameMedia.metadata, firstFrameMedia.subType),
-                (imgSequence.resolution, imgSequence.metadata, imgSequence.subType),
+                (first_frame.resolution, first_frame.metadata, first_frame.sub_type),
+                (img_sequence.resolution, img_sequence.metadata, img_sequence.sub_type),
             )
 
         finally:
@@ -141,7 +135,7 @@ class TestImageSequence(unittest.TestCase):
             os.path.join(self.tempdir, "img.1002.png"),
             os.path.join(self.tempdir, "img.1003.png"),
         ]
-        result = [image.path for image in self.imgSequence]
+        result = [image.path for image in self.img_sequence]
 
         self.assertEqual(expected, result)
 
@@ -166,18 +160,18 @@ class TestImageSequence(unittest.TestCase):
         """
         self.assertEqual(
             (os.path.join(self.tempdir, "img.1001.png"), os.path.join(self.tempdir, "img.1003.png")),
-            (self.imgSequence[0].path, self.imgSequence[-1].path),
+            (self.img_sequence[0].path, self.img_sequence[-1].path),
         )
 
     def test_len(self):
         """ Ensure ImageSequence length corresponds to images.
         """
         seqMedia = media.ImageSequence("img.2-102#.png")
-        frameRange = lite_media_core.path_utils.sequence.FrameRange(2, 102, padding=3)
+        frameRange = path_utils.sequence.FrameRange(2, 102, padding=3)
 
         self.assertEqual(
             (frameRange, 101),
-            (seqMedia.frameRange, len(seqMedia)),
+            (seqMedia.frame_range, len(seqMedia)),
         )
 
     def test_imageSequence_fromImages(self):
@@ -191,11 +185,8 @@ class TestImageSequence(unittest.TestCase):
     def test_imageSequence_invalidImages_fails(self):
         """ Ensure an image sequence cannot be created with files other than image.
         """
-        self.assertRaises(
-            ValueError,
-            media.ImageSequence,
-            "video.1-3#.mov",
-        )
+        with self.assertRaises(ValueError):
+            _ = media.ImageSequence("video.1-3#.mov")
 
     def test_imageSequence_properties(self):
         """ Ensure 'sequence' based properties can be retrieved from an ImageSequence.
@@ -208,10 +199,10 @@ class TestImageSequence(unittest.TestCase):
                 [],
             ),
             (
-                self.imgSequence.head,
-                self.imgSequence.tail,
-                self.imgSequence.padding,
-                self.imgSequence.missing,
+                self.img_sequence.head,
+                self.img_sequence.tail,
+                self.img_sequence.padding,
+                self.img_sequence.missing,
             ),
         )
 
@@ -224,7 +215,7 @@ class TestImageSequence(unittest.TestCase):
     def test_imageSequence_fromList(self):
         """ Ensure an ImageSequence object can be created from a list of file paths.
         """
-        mediaObj = _image.ImageSequence.fromList(
+        media_obj = _image.ImageSequence.from_list(
             [
                 "/path/to/file.0000.exr",
                 "/path/to/file.0005.exr",
@@ -241,17 +232,17 @@ class TestImageSequence(unittest.TestCase):
                 [1, 2, 3, 4],
             ),
             (
-                isinstance(mediaObj, _image.ImageSequence),
-                mediaObj.frameRange.start,
-                mediaObj.frameRange.end,
-                list(img.frameRange.start for img in mediaObj.missing),
+                isinstance(media_obj, _image.ImageSequence),
+                media_obj.frame_range.start,
+                media_obj.frame_range.end,
+                list(img.frame_range.start for img in media_obj.missing),
             )
         )
 
     def test_imageSequence_fromList_singleEntry(self):
         """ Ensure an Image object can be created from a list of 1 file paths.
         """
-        mediaObj = _image.ImageSequence.fromList(["file.0000.exr"])
+        media_obj = _image.ImageSequence.from_list(["file.0000.exr"])
 
         self.assertEqual(
             (
@@ -259,8 +250,8 @@ class TestImageSequence(unittest.TestCase):
                 os.path.join(os.getcwd(), "file.0000.exr"),
             ),
             (
-                isinstance(mediaObj, _image.ImageSequence),
-                mediaObj.path,
+                isinstance(media_obj, _image.ImageSequence),
+                media_obj.path,
             )
         )
 
@@ -271,56 +262,48 @@ class TestImageSequenceUtils(unittest.TestCase):
     def test_validateSequence(self):
         """ Test with a valid media sequence.
         """
-        imageMedias = [
+        image_media = [
             media.Image("/path/to/an/image1.png"),
             media.Image("/path/to/an/image2.png"),
         ]
 
-        self.assertTrue(_image._validateSequence(imageMedias))  # pylint: disable=W0212
+        self.assertTrue(_image._validate_sequence(image_media))  # pylint: disable=W0212
 
-    def test_validateSequence_invalidEmpty(self):
+    def test_validate_sequence_invalidEmpty(self):
         """ Test invalid sequence (empty).
         """
-        self.assertRaises(ValueError, _image._validateSequence, [])  # pylint: disable=W0212
+        with self.assertRaises(ValueError):
+            _ = _image._validate_sequence([])  # pylint: disable=W0212
 
-    def test_validateSequence_invalidMixTypes(self):
+    def test_validate_sequence_invalidMixTypes(self):
         """ Test invalid sequence (mix of mime types).
         """
-        imageMedias = [
-            media.Image(os.path.join(mediaPath, "img.dpx")),
-            media.Image(os.path.join(mediaPath, "img.png")),
+        image_media = [
+            media.Image(os.path.join(media_path, "img.dpx")),
+            media.Image(os.path.join(media_path, "img.png")),
         ]
 
-        self.assertRaises(
-            ValueError,
-            _image._validateSequence,  # pylint: disable=W0212
-            imageMedias,
-        )
+        with self.assertRaises(ValueError):
+            _ = _image._validate_sequence(image_media)  # pylint: disable=W0212
 
-    def test_validateSequence_invalidMissingFrame(self):
+    def test_validate_sequence_invalidMissingFrame(self):
         """ Test invalid sequence (mix or existing and missing).
         """
-        imageMedias = [
-            media.Image(os.path.join(mediaPath, "img.dpx")),
+        image_media = [
+            media.Image(os.path.join(media_path, "img.dpx")),
             media.Image("/path/to/a/missing/image.dpx"),
         ]
 
-        self.assertRaises(
-            ValueError,
-            _image._validateSequence,  # pylint: disable=W0212
-            imageMedias,
-        )
+        with self.assertRaises(ValueError):
+            _ = _image._validate_sequence(image_media)  # pylint: disable=W0212
 
-    def test_validateSequence_invalidInconsistentResolution(self):
+    def test_validate_sequence_invalidInconsistentResolution(self):
         """ Test invalid sequence (inconsistent resolution).
         """
-        imageMedias = [
-            media.Movie(os.path.join(mediaPath, "video.mov")),  # 512x512
-            media.Movie(os.path.join(mediaPath, "video_with_tc.mov")),  # 256x256
+        image_medias = [
+            media.Movie(os.path.join(media_path, "video.mov")),  # 512x512
+            media.Movie(os.path.join(media_path, "video_with_tc.mov")),  # 256x256
         ]
 
-        self.assertRaises(
-            ValueError,
-            _image._validateSequence,  # pylint: disable=W0212
-            imageMedias,
-        )
+        with self.assertRaises(ValueError):
+            _ = _image._validate_sequence(image_medias)  # pylint: disable=W0212

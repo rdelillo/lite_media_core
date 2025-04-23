@@ -3,7 +3,7 @@
 import os
 import unittest
 
-from lite_media_core.path_utils.mimeTypes import mimetypes
+from lite_media_core.path_utils.mime_types import mimetypes
 
 
 _mediaPath = os.path.join(

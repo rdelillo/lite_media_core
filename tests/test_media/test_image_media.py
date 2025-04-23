@@ -1,4 +1,4 @@
-""" Test lite_media_core.media._imageMedia module.
+""" Test lite_media_core.media._image_media module.
 """
 import os
 import tempfile
@@ -10,8 +10,9 @@ import mock
 import lite_media_core.path_utils
 
 from lite_media_core import media
-from lite_media_core.media import _imageMedia
+from lite_media_core.media import _image_media
 from lite_media_core import resolution
+
 
 mediaPath = _mediaPath = os.path.join(
     os.path.dirname(__file__),
@@ -22,15 +23,15 @@ mediaPath = _mediaPath = os.path.join(
 
 
 class TestImageMedia(unittest.TestCase):
-    """ Test the generic ImageMedia class (raw, image, movie...).
+    """ Test the generic ImageMedia class (image, movie...).
     """
     def setUp(self):
         """ Set up the testing class.
         """
-        super(TestImageMedia, self).setUp()
+        super().setUp()
 
-        imgMediaPath = os.path.join(mediaPath, "img.png")
-        self.imgMedia = _imageMedia.ImageMedia(imgMediaPath)  # test with an image file
+        img_path = os.path.join(mediaPath, "img.png")
+        self.imgMedia = _image_media.ImageMedia(img_path)
 
     def test_resolution(self):
         """ Ensure the resolution parameter is properly read from an ImageMedia object.
@@ -41,9 +42,9 @@ class TestImageMedia(unittest.TestCase):
     def test_resolutionAnamorphic(self):
         """ Ensure an anamorphic resolution is properly read from an ImageMedia object.
         """
-        expected = resolution.Resolution(64, 64, pixelAspectRatio=2.0)
-        anaImgMediaPath = os.path.join(mediaPath, "img-anamorphic.exr")
-        imgMedia = _imageMedia.ImageMedia(anaImgMediaPath)
+        expected = resolution.Resolution(64, 64, pixel_aspect_ratio=2.0)
+        ana_path = os.path.join(mediaPath, "img-anamorphic.exr")
+        imgMedia = _image_media.ImageMedia(ana_path)
 
         self.assertEqual(expected, imgMedia.resolution)
 
@@ -55,39 +56,34 @@ class TestImageMedia(unittest.TestCase):
     def test_delayLoad(self):
         """ Ensure media information gathering is delayed for an ImageMedia.
         """
-        mediaObj = _imageMedia.ImageMedia("/path/to/an/image.png")
+        media_obj = _image_media.ImageMedia("/path/to/an/image.png")
         self.assertEqual(
             (None, None),
-            (mediaObj._info, mediaObj._metadata),  # pylint: disable=W0212
+            (media_obj._info, media_obj._metadata),  # pylint: disable=W0212
         )
 
     def test_init_fails(self):
         """ Ensure an ImageMedia object cannot be created from an unsupported format.
         """
-        self.assertRaises(
-            media.UnsupportedMimeType,
-            _imageMedia.ImageMedia,
-            "/path/to/an/audio.wav",
-        )
+        with self.assertRaises(media.UnsupportedMimeType):
+            _ = _image_media.ImageMedia("/path/to/an/audio.wav")
 
     def test_attribute_fails(self):
         """ Ensure that query an attribute from an offline media fails.
         """
-        mediaObj = _imageMedia.ImageMedia("/path/to/an/image.png")
-        self.assertRaises(
-            media.MediaException,
-            mediaObj._setMediaInformation,  # pylint: disable=W0212
-        )
+        media_obj = _image_media.ImageMedia("/path/to/an/image.png")
+        with self.assertRaises(media.MediaException):
+            media_obj._set_media_information()
 
     def test_attribute_cached(self):
         """ Ensure media information is cached once gathered.
         """
-        mediaObj = _imageMedia.ImageMedia("/path/to/an/image.png")
+        media_obj = _image_media.ImageMedia("/path/to/an/image.png")
 
         # Insert fake data to work around the information gathering.
-        mediaObj._info = {"width": "1920", "height": "1080"}  # pylint: disable=W0212
+        media_obj._info = {"width": "1920", "height": "1080"}  # pylint: disable=W0212
 
-        self.assertEqual(resolution.Resolution(1920, 1080), mediaObj.resolution)
+        self.assertEqual(resolution.Resolution(1920, 1080), media_obj.resolution)
 
 
 class TestFrameRange(unittest.TestCase):
@@ -97,15 +93,15 @@ class TestFrameRange(unittest.TestCase):
     def test_frameRange_default(self):
         """ Ensure an ImageMedia object defines a default (1, 1) frameRange.
         """
-        mediaObj = _imageMedia.ImageMedia("/path/to/an/image.png")
-        frameRange = lite_media_core.path_utils.sequence.FrameRange(1, 1)
+        media_obj = _image_media.ImageMedia("/path/to/an/image.png")
+        frame_range = lite_media_core.path_utils.sequence.FrameRange(1, 1)
 
-        self.assertEqual(frameRange, mediaObj.frameRange)
+        self.assertEqual(frame_range, media_obj.frame_range)
 
     def test_frameRange_fromPath(self):
         """ Ensure an ImageMedia object defines a frameRange from path.
         """
-        mediaObj = _imageMedia.ImageMedia("/path/to/an/image.0125.png")
-        frameRange = lite_media_core.path_utils.sequence.FrameRange(125, 125, padding=4)
+        media_obj = _image_media.ImageMedia("/path/to/an/image.0125.png")
+        frame_range = lite_media_core.path_utils.sequence.FrameRange(125, 125, padding=4)
 
-        self.assertEqual(frameRange, mediaObj.frameRange)
+        self.assertEqual(frame_range, media_obj.frame_range)

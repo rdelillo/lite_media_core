@@ -48,7 +48,7 @@ def _get_library_paths(os_is_nt):
 from pymediainfo import MediaInfo  # pylint: disable=C0413
 MediaInfo._get_library_paths = _get_library_paths  # pylint: disable=W0212
 
-from lite_media_core._mediaInfo import _base  # pylint: disable=C0413
+from lite_media_core._media_info import _base  # pylint: disable=C0413
 
 
 class MediaInfoAPI(_base.AbstractRegexIdentifier):
@@ -84,42 +84,36 @@ class MediaInfoAPI(_base.AbstractRegexIdentifier):
     }
 
     @classmethod
-    def getMediaInformation(cls, inputFile):
+    def get_media_information(cls, input_path: str) -> tuple:
         """ Return information from provided media file.
 
-        :param str inputFile: The media file to get information from.
-        :return: The media information, metadata.
-        :rtype: tuple (dict, :class:`collections.OrderedDict`)
         :raise MediaInfoException: When the provided input is not supported.
         """
         info = {}
-        metadata = collections.OrderedDict()  # will store 'official' metadata upfront.
-        newMedia = MediaInfo.parse(inputFile)
+        metadata = {}  # will store 'official' metadata upfront.
+        new_media = MediaInfo.parse(input_path)
 
-        for stream in newMedia.tracks:
-            streamName = stream.track_type
+        for stream in new_media.tracks:
+            stream_name = stream.track_type
 
             for key, val in stream.to_data().items():
                 if val:
-                    if streamName == "Video" and key in cls.info_video_values:
+                    if stream_name == "Video" and key in cls.info_video_values:
                         info[cls.info_video_values[key]] = val
-                    elif streamName == "Image" and key in cls.info_image_values:
+                    elif stream_name == "Image" and key in cls.info_image_values:
                         info[cls.info_image_values[key]] = val
-                    elif streamName == "Other" and key in cls.other_video_values:
+                    elif stream_name == "Other" and key in cls.other_video_values:
                         info[cls.other_video_values[key]] = val
-                    elif streamName == "Audio" and key in cls.info_audio_values:
+                    elif stream_name == "Audio" and key in cls.info_audio_values:
                         info[cls.info_audio_values[key]] = val
                     else:
-                        if streamName not in metadata:
-                            metadata[streamName] = {}
-                        metadata[streamName][key] = val
+                        if stream_name not in metadata:
+                            metadata[stream_name] = {}
+                        metadata[stream_name][key] = val
 
         # Make sure we got some data
-        try:
-            assert info and metadata
-
-        except AssertionError as error:
-            raise _base.MediaInfoException("Unsupported file: %s." % inputFile) from error
+        if not info and metadata:
+            raise _base.MediaInfoException(f"Unsupported file: {input_path}.") from error
 
         # Convert milliseconds to seconds
         if "seconds" in info:

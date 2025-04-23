@@ -1,15 +1,13 @@
 """ Rate module.
 """
+from typing import Union, Optional
+
 import abc
 import decimal
 
 
-# Technically any speed can be used as a video frame rate. This is true with the latest media players.
-# However before the industry went digital, it was shot on film and so it kept some standards from analogical
-# times. The following standards are the most common ones from the industry:
-# http://documentation.apple.com/en/finalcutpro/usermanual/index.html#chapter=D%26section=4%26tasks=true
-# https://en.wikipedia.org/wiki/List_of_broadcast_video_formats
-_STANDARD_RATES = {
+# The following standards are the most common ones from the industry:
+_INDUSTRY_STANDARD_RATES = {
     "Film with NTSC compatibility": decimal.Decimal(24) * (decimal.Decimal(1000) / decimal.Decimal(1001)),
     "Film": decimal.Decimal(24),
     "PAL/SECAM video": decimal.Decimal(25),
@@ -33,67 +31,44 @@ class _AbstractFrameRate:
     """
     __metaclass__ = abc.ABCMeta
 
-    def __init__(self, rate, name=None):
+    def __init__(self, rate: Union[str, float, decimal.Decimal], name: str = None):
         """ Initialize a AbstractFrameRate object.
-
-        :param rate: The frame rate value.
-        :type rate: str or float or int or decimal.Decimal
-        :param str name: The frame rate name.
         """
         self._rate = rate
         self._name = name
 
-    def __str__(self):
+    def __str__(self) -> str:
         """ Represent current AbstractFrameRate object as string.
-
-        :return: The string representation.
-        :rtype: str
         """
-        return "%s fps" % float(self)
+        return f"{float(self)} fps"
 
-    def __float__(self):
-        """ Represent current AbstractFrameRate object as float.
-
-        :return: The float representation.
-        :rtype: float
+    def __float__(self) -> float:
+        """ Convert to float.
         """
         return round(float(self._rate), 2)
 
-    def __repr__(self):
-        """ Represent current AbstractFrameRate object.
-
-        :return: The object representation.
-        :rtype: str
+    def __repr__(self) -> str:
+        """ Represent the AbstractFrameRate.
         """
-        return "<%s %s %s>" % (self.__class__.__name__, self, self._name)
+        return f"<{self.__class__.__name__} {self} {self._name}>"
 
-    def __eq__(self, other):
-        """ Override the default "equals" behavior.
-
-        :param object other: An object to compare against.
-        :return: is equal to other object.
-        :rtype: bool
+    def __eq__(self, other: object) -> bool:
+        """ Is equal ?
         """
         try:
             return float(self) == float(other)
 
         except (ValueError, TypeError) as error:
-            raise type(error)("Invalid comparison between FrameRate and %r." % other)
+            raise ValueError("Invalid comparison between FrameRate and {other}.")
 
-    def __ne__(self, other):
+    def __ne__(self, other: object) -> bool:
         """ Override the default "not equals" behavior.
-
-        :param object other: An object to compare against.
-        :return: is not equal to other object.
-        :rtype: bool
         """
         return not self == other
 
     @property
-    def name(self):
-        """
-        :return: The rate name.
-        :rtype: str
+    def name(self) -> str:
+        """ The rate name.
         """
         return self._name
 
@@ -102,22 +77,20 @@ class FrameRate(_AbstractFrameRate):
     """ Industry standard frame rates handling.
     """
 
-    def __init__(self, rate):
-        """ Initialize a AbstractFrameRate object.
+    def __init__(self, rate: Union[str, float, decimal.Decimal], name: str = None):
+        """ Initialize a FrameRate object.
 
-        :param rate: The rate value.
-        :type rate: str or float or int or decimal.Decimal
-        :raise FrameRateException: when the input rate is invalid or not standard.
+        :raise FrameRateException: when the input rate is either invalid or not standard.
         """
         try:
-            name, conformedRate = _conformToIndustryRate(float(rate))
-            super().__init__(conformedRate, name=name)
-
-        except TypeError as error:
-            raise FrameRateException("Cannot find standard frame rate from %r." % rate) from error
+            name, conformed_rate = _conform_to_industry_rate(float(rate))
+            super().__init__(conformed_rate, name=name)
 
         except ValueError as error:
-            raise FrameRateException("Cannot initialise frame rate from %r." % rate) from error
+            raise FrameRateException(f"Cannot initialize frame rate from {rate}.") from error
+
+        except TypeError as error:
+            raise FrameRateException(f"Cannot find standard frame rate from {rate}.") from error
 
     @classmethod
     def fromCustomRate(cls, rate):
@@ -140,15 +113,11 @@ class NonStandardFrameRate(_AbstractFrameRate):
     """
 
 
-def _conformToIndustryRate(rate):
-    """ Conform input rate value against industry standards.
-
-    :param float rate: The frame rate to inspect.
-    :return: The standard name and conformed rate.
-    :rtype: tuple or None
+def _conform_to_industry_rate(rate:  Union[str, float, decimal.Decimal]) -> Optional[tuple]:
+    """ Compare input rate value against industry standards.
     """
-    for name, conformedRate in _STANDARD_RATES.items():
-        if float(round(conformedRate, 2)) == float(round(rate, 2)):
-            return name, conformedRate
+    for name, conformed_rate in _INDUSTRY_STANDARD_RATES.items():
+        if float(round(conformed_rate, 2)) == float(round(rate, 2)):
+            return name, conformed_rate
 
     return None

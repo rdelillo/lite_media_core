@@ -1,36 +1,33 @@
 """ Audio module.
 """
 from lite_media_core import timeCode as _timeCode
-from lite_media_core import _mediaInfo
+from lite_media_core import _media_info
 from lite_media_core.media import _media
 
 
 class Audio(_media.Media):
     """ Audio media.
     """
-    registeredMimeTypes = ("audio",)
+    registered_mime_types = ("audio",)
 
-    def __init__(self, path, mimeType=None):
+    def __init__(self, path: str, mime_type: str = None):
         """ Initialize a new Audio object.
 
-        :param str path: The media file path.
-        :param str mimeType: An optional media mime-type.
         :raise ValueError: When the provided path is not an audio media.
         """
-        super().__init__(path, mimeType=mimeType)
+        super().__init__(path, mime_type=mime_type)
 
         if self.type != "audio":
-            raise _media.UnsupportedMimeType("Cannot create an Audio media from %s (%s) "
-                 "valid types are %s." % (path, self.type, Audio.registeredMimeTypes))
+            raise _media.UnsupportedMimeType(
+                f"Cannot create an Audio media from {path} ({self.type}) "
+                f"valid types are {Audio.registered_mime_types}."
+            )
 
         # Delay information load.
-        # Gathering information from a specific media can be time-consuming (or even not possible
-        # when the media does not exist). However, users should still be able to create media objects
-        # skipping this step.
-        # The information is then computed on need, when specific attributes are queried.
+        # The information is computed on need, when audio attribute is queried.
         self._info, self._metadata = None, None
 
-    def _setMediaInformation(self):
+    def _set_media_information(self):
         """ Gather audio file information.
 
         :raise: `lite_media_core.MediaException`: When no information can be gathered from the media.
@@ -39,57 +36,45 @@ class Audio(_media.Media):
             return
 
         try:
-            self._info, self._metadata = _mediaInfo.getMediaInformation(self._path)
+            self._info, self._metadata = _media_info.get_media_information(self._path)
 
         except ValueError as error:
-            raise _media.MediaException("Cannot get media information for %s, offline ?" % self) from error
+            raise _media.MediaException(f"Cannot get media information for {self}, offline ?") from error
 
     @property
-    def duration(self):
-        """ The audio duration.
-
-        :return: The audio file duration.
-        :rtype: float
+    def duration(self) -> float:
+        """ The audio duration in seconds.
         """
-        self._setMediaInformation()
+        self._set_media_information()
         return self._info["duration_in_ms"] / 1000.0
 
     @property
-    def conformedDuration(self):
-        """ The audio duration.
-
-        :return: The audio file duration.
-        :rtype: `class:lite_media_core.timeCode.Timecode`
+    def conformed_duration(self) -> _timeCode.TimeCode:
+        """ The audio duration as timecode (24fps).
         """
-        self._setMediaInformation()
-        return _timeCode.TimeCode.fromSeconds(
+        self._set_media_information()
+        return _timeCode.TimeCode.from_seconds(
             self.duration,
             24.0,
         )
 
     @property
-    def samplingRate(self):
+    def sampling_rate(self) -> int:
+        """ The audio sampling rate.
         """
-        :return: The audio sampling rate.
-        :rtype: int
-        """
-        self._setMediaInformation()
+        self._set_media_information()
         return self._info["samplingRate"]
 
     @property
-    def bitrate(self):
+    def bitrate(self) -> int:
+        """ The audio bitrate.
         """
-        :return: The audio file bitrate.
-        :rtype: int
-        """
-        self._setMediaInformation()
+        self._set_media_information()
         return self._info["bitrate"]
 
     @property
-    def metadata(self):
-        """
-        :return: The metadata associated with the audio file.
-        :rtype: dict.
+    def metadata(self) -> dict:
+        """ The metadata associated with the audio file.
         """
         self._setMediaInformation()
         return self._metadata.copy()

@@ -1,5 +1,7 @@
 """ Timecode handling.
 """
+from typing import Union
+
 import math
 import re
 import timecode as tcLib  # external lib
@@ -15,19 +17,16 @@ class TimecodeException(Exception):
 class TimeCode:
     """ Timecode handling.
     """
-    def __init__(self, value, frameRate):
+
+    def __init__(self, value: Union[str, int], frame_rate: Union[float, int, str, rate.FrameRate]):
         """ Initialize a new Timecode object.
 
-        :param value: The timecode string value or the amount of frames.
-        :type value: str or int
-        :param frameRate: The timecode frame rate.
-        :type frameRate: float or int or long or str or :class:`lite_media_core.rate.FrameRate`
         :raise TimecodeException: When the input parameters are incorrect.
         """
-        value, self._frameRate = _checkTcParameters(value, frameRate)
+        value, self._frame_rate = _check_tc_parameters(value, frame_rate)
 
         # tcLib takes only frame rate such as '23.98', '24', '25', '29.97', '30', '50', '59.94' and '60'
-        tcLibFrameRate = str(float(self._frameRate)).replace(".0", "")
+        tcLib_frame_rate = str(float(self._frame_rate)).replace(".0", "")
 
         # Technically this class is a wrap over an external 'timecode' library. This helps to provide a
         # consistent interface with other modules of lite_media_core. Also since this external library is not
@@ -38,9 +37,9 @@ class TimeCode:
         # - no millisecond based timecode
         # - no unit tests
         if isinstance(value, str):
-            self._timecode = tcLib.Timecode(tcLibFrameRate, start_timecode=value)
-            tcAsframes = math.ceil(self.seconds * float(self._frameRate))  # 1.01 frame is 2 frames
-            self._frames = int(tcAsframes)
+            self._timecode = tcLib.Timecode(tcLib_frame_rate, start_timecode=value)
+            tc_as_frames = math.ceil(self.seconds * float(self._frame_rate))  # 1.01 frame is 2 frames
+            self._frames = int(tc_as_frames)
         else:
 
             # The timecode external library is based such as the 'frames' attribute is the next 'playable'
@@ -53,74 +52,49 @@ class TimeCode:
             # >>> tcCompensated.add_frames(1)
             # >>> str(tcCompensated)
             # '00:00:00:01'
-            self._timecode = tcLib.Timecode(tcLibFrameRate, frames=value)
+            self._timecode = tcLib.Timecode(tcLib_frame_rate, frames=value)
             self._timecode.add_frames(1)
             self._frames = value
 
-    def __str__(self):
-        """ Represent current Timecode object as a string.
-
-        :return: The string representation.
-        :rtype: str
+    def __str__(self) -> str:
+        """ Format current Timecode object as a string.
         """
         return str(self._timecode)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """ Represent current Timecode object.
-
-        :return: The object representation.
-        :rtype: str
         """
-        return "<%s '%s' rate='%s'>" % (self.__class__.__name__, self, self._frameRate)
+        return "<%s '%s' rate='%s'>" % (self.__class__.__name__, self, self._frame_rate)
 
-    def __int__(self):
+    def __int__(self) -> int:
         """ Represent current Timecode object as int.
-
-        :return: The int representation.
-        :rtype: int
         """
         return self.frames
 
-    def __eq__(self, other):
-        """ Override the default "equals" behavior.
-
-        :param object other: An object to compare against.
-        :return: is equal to other object.
-        :rtype: bool
+    def __eq__(self, other: object) -> bool:
+        """ Is equal ?
         """
         self.__checkTypeOnTcOperation(other)
         return int(self) == int(other)
 
-    def __ne__(self, other):
-        """ Override the default "not equals" behavior.
-
-        :param object other: An object to compare against.
-        :return: is not equal to other object.
-        :rtype: bool
+    def __ne__(self, other: object) -> bool:
+        """ Is not equal ?
         """
         return not self == other
 
-    def __lt__(self, other):
+    def __lt__(self, other: object) -> bool:
         """ Override the default "lower then" behavior.
-
-        :param object other: An object to compare against.
-        :return: is lower then other object.
-        :rtype: bool
         """
         self.__checkTypeOnTcOperation(other)
         return int(self) < int(other)
 
-    def __gt__(self, other):
+    def __gt__(self, other: object) -> bool:
         """ Override the default "greater then" behavior.
-
-        :param object other: An object to compare against.
-        :return: is greater then other object.
-        :rtype: bool
         """
         self.__checkTypeOnTcOperation(other)
         return int(self) > int(other)
 
-    def __add__(self, other):
+    def __add__(self, other: object):
         """ Override the default "add" behavior.
 
         :param object other: An object to add with current one.
@@ -128,7 +102,7 @@ class TimeCode:
         :rtype: :class:`TimeCode`
         """
         self.__checkTypeOnTcOperation(other)
-        return TimeCode(int(self) + int(other), self.frameRate)
+        return TimeCode(int(self) + int(other), self._frame_rate)
 
     def __checkTypeOnTcOperation(self, other):
         """
@@ -141,40 +115,34 @@ class TimeCode:
             raise TypeError("Invalid operation between Timecode and %r." % object)
 
         # Does not handle frame rate conform yet.
-        if self.frameRate != other.frameRate:
-            raise ValueError("Cannot compare timecodes with different frame rates %r." % other.frameRate)
+        if self.frame_rate != other.frame_rate:
+            raise ValueError("Cannot compare timecodes with different frame rates %r." % other.frame_rate)
 
     @property
-    def frames(self):
-        """
-        :return: The timecode as a number of frames.
-        :rtype: int
+    def frames(self) -> int:
+        """ The timecode as a number of frames.
         """
         return self._frames
 
     @property
-    def seconds(self):
-        """
-        :return: The timecode as a total number of seconds.
-        :rtype: float
+    def seconds(self) -> float:
+        """ The timecode as a total number of seconds.
         """
         return sum((
             3600 * self._timecode.hrs,
             60 * self._timecode.mins,
             self._timecode.secs,
-            self._timecode.frs / float(self._frameRate),
+            self._timecode.frs / float(self.frame_rate),
         ))
 
     @property
-    def frameRate(self):
+    def frame_rate(self) -> rate.FrameRate:
+        """ The timecode frame rate.
         """
-        :return: The timecode frame rate.
-        :rtype: :class: `lite_media_core.rate.FrameRate`
-        """
-        return self._frameRate
+        return self._frame_rate
 
     @classmethod
-    def fromSeconds(cls, valueInSeconds, frameRate):
+    def from_seconds(cls, value_seconds: float, frame_rate: Union[int, float, rate.FrameRate]):
         """ Create a new Timecode object from a time in seconds.
 
         :param float valueInSeconds: The timecode duration as seconds.
@@ -183,85 +151,65 @@ class TimeCode:
         :return: The Timecode object.
         :rtype: :class:`Timecode`
         """
-        if not isinstance(frameRate, (rate.FrameRate, rate.NonStandardFrameRate)):
-            frameRate = rate.FrameRate(frameRate)
+        if not isinstance(frame_rate, (rate.FrameRate, rate.NonStandardFrameRate)):
+            frame_rate = rate.FrameRate(frame_rate)
 
-        valueInFrames = math.ceil(valueInSeconds * float(frameRate))
-        return cls(int(valueInFrames), frameRate)
+        value_frames = math.ceil(value_seconds * float(frame_rate))
+        return cls(int(value_frames), frame_rate)
 
 
-def _checkTcParameters(tcValue, tcRate):
+def _check_tc_parameters(tc_value: Union[str, int], tc_rate: Union[float, int, rate.FrameRate]) -> tuple:
     """ Ensure timecode parameters are with correct type.
 
-    :param tcValue: The timecode string value or the amount of frames.
-    :type tcValue: str or int
-    :param tcRate: The timecode frame rate.
-    :type tcRate: float or int or long or str or :class:`lite_media_core.rate.FrameRate`
-    :return: The conformed frame rate.
-    :rtype: tuple(str, :class:`lite_media_core.rate.FrameRate`)
     :raise TimecodeException: When the input parameters are incorrect.
     """
-    # Check timecode input types.
-    if not isinstance(tcValue, str) and not isinstance(tcValue, int):
-        raise TimecodeException("Invalid timecode value %r, should be int or str." % tcValue)
+    if not isinstance(tc_value, (int, str)):
+        raise TimecodeException(f"Invalid timecode value {tc_value}, should be int or str.")
 
-    # Check timecode frame rate.
-    if not isinstance(tcRate, (rate.FrameRate, rate.NonStandardFrameRate)):
+    if not isinstance(tc_rate, (rate.FrameRate, rate.NonStandardFrameRate)):
         try:
-            tcRate = rate.FrameRate.fromCustomRate(tcRate)
+            tc_rate = rate.FrameRate.fromCustomRate(tc_rate)
+
         except rate.FrameRateException as error:
             raise TimecodeException("Invalid frame rate for timecode: %s." % error) from error
 
-    # Check timecode string value.
-    if isinstance(tcValue, str) and not isValidTimecodeStr(tcValue, frameRate=tcRate):
+    if isinstance(tc_value, str) and not is_valid_timecode_str(tc_value, frame_rate=tc_rate):
 
         # Attempt to convert the timecode string from a milliseconds based formatting.
         try:
-            tcValue = _conformMilliSecondTimecode(tcValue, tcRate)
+            tc_value = _conform_millisecond_timecode(tc_value, tc_rate)
 
         except ValueError as error:
-            raise TimecodeException("Invalid timecode value %r, "
-                "not a valid timecode str syntax." % tcValue) from error
+            raise TimecodeException(
+                f"Invalid timecode value {tc_value}, not a valid timecode str syntax."
+            ) from error
 
-    return tcValue, tcRate
+    return tc_value, tc_rate
 
 
-def _conformMilliSecondTimecode(tcString, frameRate):
+def _conform_millisecond_timecode(tc_string: str, frame_rate: rate.FrameRate) -> str:
     """ Conform a 'HH:MM:SS.MSMS' timecode string to 'HH:MM:SS:FF'.
-
-    :param str tcString: The timecode string to conform.
-    :param frameRate: The timecode frame rate to use for conforming.
-    :type frameRate: :class:`lite_media_core.rate.FrameRate`
-    :return: The conformed timecode string value.
-    :rtype: str
     """
-    validTimeCode, milliSeconds = tcString.split(".")
-    tc = TimeCode.fromSeconds(float("0.%s" % milliSeconds), frameRate)
-    return validTimeCode + ":%02d" % tc.frames
+    valid_timecode, milliseconds = tc_string.split(".")
+    tc = TimeCode.fromSeconds(float("0.%s" % milliseconds), frame_rate)
+    return valid_timeCode + ":%02d" % tc.frames
 
 
-def isValidTimecodeStr(tcString, frameRate=24.0):
+def is_valid_timecode_str(tc_string: str, frame_rate: float = 24.0) -> bool:
     """ Check if a timecode string is valid according to a certain rate.
-
-    :param str tcString: A timecode string to check.
-    :param frameRate: An optional timecode frame rate to validate against.
-    :type frameRate: float or int or long or str or :class:`lite_media_core.rate.FrameRate`
-    :return: Is provided timecode valid ?
-    :rtype: bool
     """
     try:
-
         # Note, tcLib handles milliseconds based timecode since 1.2.0,
         # but math logic seems wrong:
         # test = tcLib.Timecode(24.0, '00:00:00.08')  80 milliseconds ~ 2 frames
         # test.frs = '0.083'
         # so force internal computation.
         MILLISECS_REGEX = r"\d\d:\d\d:\d\d\.[\d]*"
-        if re.match(MILLISECS_REGEX, tcString):
+        if re.match(MILLISECS_REGEX, tc_string):
             raise ValueError("Milliseconds-based timecode string")
 
         # Default tcLib check.
-        tcLib.Timecode(float(frameRate), start_timecode=tcString)
+        tcLib.Timecode(float(frame_rate), start_timecode=tc_string)
         return True
 
     except ValueError:

@@ -3,7 +3,7 @@
 import unittest
 import os
 
-from lite_media_core.path_utils import singleFile
+from lite_media_core.path_utils import single_file
 from lite_media_core.path_utils import sequence
 
 
@@ -15,7 +15,7 @@ class TestSingleFile(unittest.TestCase):
         """ Set up the testing class.
         """
         super(TestSingleFile, self).setUp()
-        self.singleFile = singleFile.SingleFile("/path/to/a/file.ext")
+        self.singleFile = single_file.SingleFile("/path/to/a/file.ext")
 
     def test_representation(self):
         """ Ensure a SingleFile object represents itself correctly.

@@ -4,11 +4,11 @@ import re
 
 import fileseq
 
-# Regex for the padding notation we support
+# Regex for the padding notation
 # Will match: '#', '###', '@', '@@', '%d', '%03d', '$F', '$F4', etc
 REGEX_PADDING = r"#+|@+|%(?:\d+)?d|\$F(?:\d+)?"
 
-# Regex for a frame range notation we support
+# Regex for a frame range notation
 # Will match: '1-2' '1,2' '1, 2' '1-2, 3' '1-2,3' '1,2-3'
 REGEX_FRAME_RANGE = r"-?\d+(?:[-,(?:, )]+-?\d+)*"
 
@@ -26,55 +26,49 @@ REGEX_SEQUENCE_PATH = (
 )
 
 
-def conformPath(path):
+def conform_path(path: str) -> tuple:
     """ Conform a path to it can be processed by `fileseq`.
 
     This will convert any EXTENDED notation to CONTAINED notation.
     ex: "img.%04d.exr 1-10" -> "img.1-10%04d.exr"
 
-    :param str path: A path string
-    :return: The path, it's extended frame range if any and it's missing frame range if any.
-    :rtype: tuple(str, str or None, str or None)
     :raises ValueError: If the provided path is not a valid sequence path.
     """
     match = re.match(REGEX_SEQUENCE_PATH, path)
     if not match:
-        raise ValueError("Invalid path: %r" % path)
+        raise ValueError(f"Invalid path: {path}.")
 
-    (head, containedFrameRange, padding, tail, extendedFrameRange, missingFrameRange,) = match.groups()
+    (head, contained_frame_range, padding, tail, extended_frame_range, missing_frame_range,) = match.groups()
 
-    if containedFrameRange and extendedFrameRange:
+    if contained_frame_range and extended_frame_range:
         raise ValueError("Path cannot have both a contained and an extended frame range: %r" % path)
 
     # Resolve frame-range
-    if containedFrameRange:
-        frameRange = _conformFrameRange(containedFrameRange)
-    elif extendedFrameRange:
-        frameSet = fileseq.FrameSet(_conformFrameRange(extendedFrameRange))
-        if missingFrameRange:
-            frameSet -= fileseq.FrameSet(_conformFrameRange(missingFrameRange))
-        frameRange = str(frameSet)
-    else:
-        frameRange = ""
+    if contained_frame_range:
+        frame_range = _conform_frame_range(contained_frame_range)
 
-    # Resolve padding
+    elif extended_frame_range:
+        frameSet = fileseq.FrameSet(_conform_frame_range(extended_frame_range))
+        if missing_frame_range:
+            frameSet -= fileseq.FrameSet(_conform_frame_range(missing_frame_range))
+        frame_range = str(frameSet)
+
+    else:
+        frame_range = ""
+
     # If the padding suggested by the frame range is higher than what the padding suggest,
     # replace the padding by the suggested frame range padding.
     # ex: "0001-0010@@" -> "0001-0010@@@@"
-    frangeHint = _getFrameRangeSuggestedPadding(frameRange) if frameRange else None
-    paddingHint = fileseq.getPaddingNum(_conformPadding(padding)) if padding else 1
-    paddingNumber = frangeHint if frangeHint and frangeHint > paddingHint else paddingHint
-    padding = fileseq.getPaddingChars(paddingNumber)
+    frange_hint = _get_suggested_padding(frame_range) if frame_range else None
+    padding_hint = fileseq.getPaddingNum(_conform_padding(padding)) if padding else 1
+    padding_number = frange_hint if frange_hint and frange_hint > padding_hint else padding_hint
+    padding = fileseq.getPaddingChars(padding_number)
 
-    return (head or "") + frameRange + padding + tail
+    return (head or "") + frame_range + padding + tail
 
 
-def _conformFrameRange(value):
+def _conform_frame_range(value: str) -> str:
     """ Conform a frame range string for `fileseq`.
-
-    :param str value: A frame range string
-    :return: A frame range conformed for fileseq
-    :rtype: str
     """
     # Remove any unneeded space
     # "1, 2" -> "1,2"
@@ -84,36 +78,27 @@ def _conformFrameRange(value):
     # "1001-1001" -> "1001"
     match = re.match(r"^(-?\d+)-(-?\d+)$", value)
     if match:
-        startFrame, endFrame = match.groups()
-        if startFrame == endFrame:
-            value = startFrame
+        start_frame, end_frame = match.groups()
+        if start_frame == end_frame:
+            value = start_frame
 
     return value
 
 
-def _getFrameRangeSuggestedPadding(value):
+def _get_suggested_padding(value) -> int:
     """ From a provided frame range, extract the the padding number.
     The padding will always be 1 if the first frame does not start with '0'.
 
-    Note: This logic control what happen if there's ambiguity.
-    Is "1001-1010" zero padded? lite_media_core.path_utils current implementation say no.
-
-    :param str value: A frame range string
-    :return: The suggested padding number
-    :rtype: int
+    Note: What happen if there is an ambiguity ?
+    Is "1001-1010" zero padded? current implementation says no !.
     """
-    firstFrameStr = re.match(r"(-?\d+)", value).group()
-    return len(firstFrameStr) if firstFrameStr.lstrip("-").startswith("0") else 1
+    first_frame_str = re.match(r"(-?\d+)", value).group()
+    return len(first_frame_str) if first_frame_str.lstrip("-").startswith("0") else 1
 
 
-def _conformPadding(value):
+def _conform_padding(value: str) -> str:
     """ Conform a padding value so it is compatible with fileseq.
-
-    :param str value: A padding string (ex: '%04d')
-    :return: A conformed padding string
-    :rtype: str
     """
-    # Houdini edge-case
     if value.startswith("$F"):
         padding = value.lstrip("$F")
         return "@" * int(padding) if padding else "@"
@@ -128,20 +113,15 @@ def _conformPadding(value):
     return value
 
 
-def _conformDiscoveredFileSeq(sequence):
-    """ Conform a raw fileSeq sequence object obtained from discovery methods like:
+def _conform_discovered_fileSeq(sequence: fileseq.FileSequence) -> fileseq.FileSequence:
+    """ Conform a raw fileSeq sequences obtained from discovery methods like:
 
     - `fileseq.findSequenceOnDisk`
     - `fileseq.findSequencesOnDisk`
     - `fileseq.findSequenceInList`
 
     By default, fileseq will consider "1001-1010" to have a padding of 4.
-    We only assume zero padding if the frame range start with "0" explicitly.
-
-    :param sequence: A fileseq sequence object
-    :type sequence: :class:`fileseq.FileSequence`
-    :return: A conformed fileseq sequence object
-    :rtype: :class:`fileseq.FileSequence`
+    Assume zero padding if the frame range start with "0" explicitly.
     """
     if sequence.zfill() == len(str(sequence.start())):
         sequence.setPadding(fileseq.getPaddingChars(1))
@@ -149,69 +129,59 @@ def _conformDiscoveredFileSeq(sequence):
     return sequence
 
 
-def validateFileSequence(fileSeqObj):
+def validate_file_sequence(file_seq_obj: fileseq.FileSequence):
     """ Validate a fileseq sequence object can be used to create a sequence object.
 
-    :param fileSeqObj: A fileseq sequence object
-    :type fileSeqObj: :class:`fileseq.FileSequence`
     :raises ValueError: If the fileseq sequence object is invalid
     """
     # If there's no frameSet, we are not dealing with a sequence but a single path.
-    if fileSeqObj.frameSet() is None:
-        raise ValueError("Sequence have no frame information.")
+    if file_seq_obj.frameSet() is None:
+        raise ValueError("Sequence has got no frame information.")
 
 
-def findSequencesOnDisk(data):
+def find_sequences_on_disk(data: str) -> list:
     """ Wrapper around `fileseq.findSequencesOnDisk`.
-
-    :param str data: A location on disk to scan
-    :return: A list of fileseq FileSequence object.
-    :rtype: list(:class:`fileseq.FileSequence`)
     """
-    for fileSeqSequence in sorted(fileseq.findSequencesOnDisk(data), key=repr):
+    for fileSeq_sequence in sorted(fileseq.findSequencesOnDisk(data), key=repr):
         try:
-            validateFileSequence(fileSeqSequence)
+            validate_file_sequence(fileSeq_sequence)
         except ValueError:
             continue
 
-        yield _conformDiscoveredFileSeq(fileSeqSequence)
+        yield _conform_discovered_fileSeq(fileSeqSequence)
 
 
-def findSequencesInList(listData):
+def find_sequences_in_list(list_data: list) -> tuple:
     """ Wrapper around `fileseq.findSequencesInList`.
 
     There are two ways of creating sequences from a list:
-    - lite_media_core.path_utils.getSequences
-    - lite_media_core.path_utils.sequence.Sequence.fromList
+    - lite_media_core.path_utils.get_sequences
+    - lite_media_core.path_utils.sequence.Sequence.from_list
 
     Both will refer this common logic, however they don't act the same when encountering a list containing
     non-sequence (`getSequences` yield a :class:`SingleFile`, `Sequence.fromList` will ignore it).
-
-    :param list listData: The data to initialize the Sequence from.
-    :return: A list of fileseq FileSequence objects and a list of values that where not recognised.
-    :rtype: tuple(list(:class:`fileseq.FileSequence`), set(str))
     """
     sequences = []
-    remains = set(listData)
+    remains = set(list_data)
 
-    for fileSeqSequence in sorted(fileseq.findSequencesInList(listData), key=repr):
+    for fileSeq_sequence in sorted(fileseq.findSequencesInList(list_data), key=repr):
         # Hack: fileseq can incorrectly recognize a "contained" notation without a padding identifier.
         # >>> fileseq.findSequencesInList(['0001-0010.ext'])
         # [<FileSequence: '0001-10@@@@@.ext'>]
         # A common symptom is that the head of the sequence end with
         # a number which is weird by itself.
-        if next(reversed(fileSeqSequence.basename()), "").isdigit():
+        if next(reversed(fileSeq_sequence.basename()), "").isdigit():
             continue
 
         try:
-            validateFileSequence(fileSeqSequence)
+            validate_file_sequence(fileSeq_sequence)
         except ValueError:
             continue
 
-        sequences.append(_conformDiscoveredFileSeq(fileSeqSequence))
+        sequences.append(_conform_discovered_fileSeq(fileSeq_sequence))
 
         # We iter the FileSequence instead of the Sequence since the Sequence will normalize paths.
-        for path in fileSeqSequence:
+        for path in fileSeq_sequence:
             remains.discard(path)
 
     # Start by yielding sequence from string representation

@@ -24,7 +24,7 @@ class TestMedia(unittest.TestCase):
         """
         super().setUpClass()
         cls.audioFile = os.path.join(mediaPath, "sample.mp3")
-        cls.audioSample = media.Audio.fromPath(cls.audioFile)
+        cls.audioSample = media.Audio.from_path(cls.audioFile)
 
     def test_failsFromNotAnAudio(self):
         """ Ensure an Audio object fails when not created from an audio file.
@@ -42,7 +42,7 @@ class TestMedia(unittest.TestCase):
         self.assertTrue(self.audioSample.exists)
         self.assertEqual(
             ("audio", "mpeg3"),
-            (self.audioSample.type, self.audioSample.subType),
+            (self.audioSample.type, self.audioSample.sub_type),
         )
 
     def test_audio_settings(self):
@@ -57,9 +57,9 @@ class TestMedia(unittest.TestCase):
             ),
             (
                 self.audioSample.duration,
-                str(self.audioSample.conformedDuration),
+                str(self.audioSample.conformed_duration),
                 self.audioSample.bitrate,
-                self.audioSample.samplingRate
+                self.audioSample.sampling_rate
             )
         )
 
@@ -67,7 +67,7 @@ class TestMedia(unittest.TestCase):
         """ Ensure basic settings of an audio file can be sorted.
         """
         audioFile = os.path.join(mediaPath, "sample2.mp3")
-        audioSample = media.Audio.fromPath(audioFile)
+        audioSample = media.Audio.from_path(audioFile)
 
         self.assertEqual(
             (
@@ -78,8 +78,8 @@ class TestMedia(unittest.TestCase):
             ),
             (
                 int(audioSample.duration),
-                str(audioSample.conformedDuration),
+                str(audioSample.conformed_duration),
                 audioSample.bitrate,
-                audioSample.samplingRate
+                audioSample.sampling_rate
             )
         )

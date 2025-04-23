@@ -7,8 +7,8 @@ from datetime import datetime
 import collections
 import unittest
 
-from lite_media_core._mediaInfo import _base
-from lite_media_core._mediaInfo import _mediaInfoAPI
+from lite_media_core._media_info import _base
+from lite_media_core._media_info import _media_info_api
 
 
 _mediaPath = os.path.join(
@@ -53,7 +53,7 @@ class TestMediaInfoAPI(unittest.TestCase):
 
         self.assertEqual(
             information,
-            _mediaInfoAPI.MediaInfoAPI.getMediaInformation(path)[0],
+            _media_info_api.MediaInfoAPI.getMediaInformation(path)[0],
         )
 
     def test_jpg(self):
@@ -67,7 +67,7 @@ class TestMediaInfoAPI(unittest.TestCase):
 
         self.assertEqual(
             information,
-            _mediaInfoAPI.MediaInfoAPI.getMediaInformation(path)[0],
+            _media_info_api.MediaInfoAPI.getMediaInformation(path)[0],
         )
 
     def test_tiff(self):
@@ -81,7 +81,7 @@ class TestMediaInfoAPI(unittest.TestCase):
       
         self.assertEqual(
             information,
-            _mediaInfoAPI.MediaInfoAPI.getMediaInformation(path)[0],
+            _media_info_api.MediaInfoAPI.getMediaInformation(path)[0],
         )
 
     def test_dpx(self):
@@ -95,7 +95,7 @@ class TestMediaInfoAPI(unittest.TestCase):
         }
         self.assertEqual(
             information,
-            _mediaInfoAPI.MediaInfoAPI.getMediaInformation(path)[0],
+            _media_info_api.MediaInfoAPI.getMediaInformation(path)[0],
         )
 
     def test_dpx_anamorphic(self):
@@ -110,7 +110,7 @@ class TestMediaInfoAPI(unittest.TestCase):
         }
         self.assertEqual(
             information,
-            _mediaInfoAPI.MediaInfoAPI.getMediaInformation(path)[0],
+            _media_info_api.MediaInfoAPI.getMediaInformation(path)[0],
         )
 
     def test_exr(self):
@@ -124,7 +124,7 @@ class TestMediaInfoAPI(unittest.TestCase):
         }
         self.assertEqual(
             information,
-            _mediaInfoAPI.MediaInfoAPI.getMediaInformation(path)[0],
+            _media_info_api.MediaInfoAPI.getMediaInformation(path)[0],
         )
 
     def test_exr_anamorphic(self):
@@ -139,7 +139,7 @@ class TestMediaInfoAPI(unittest.TestCase):
 
         self.assertEqual(
             information,
-            _mediaInfoAPI.MediaInfoAPI.getMediaInformation(path)[0]
+            _media_info_api.MediaInfoAPI.getMediaInformation(path)[0]
         )
 
     def test_mov(self):
@@ -172,7 +172,7 @@ class TestMediaInfoAPI(unittest.TestCase):
 
         self.assertEqual(
             information,
-            _mediaInfoAPI.MediaInfoAPI.getMediaInformation(path)[0],
+            _media_info_api.MediaInfoAPI.getMediaInformation(path)[0],
         )
 
     def test_unsupportedFile_fails(self):
@@ -184,7 +184,7 @@ class TestMediaInfoAPI(unittest.TestCase):
 
             self.assertRaises(
                 _base.MediaInfoException,
-                _mediaInfoAPI.MediaInfoAPI.getMediaInformation,
+                _media_info_api.MediaInfoAPI.getMediaInformation,
                 tmpFile.name,
             )
 
@@ -205,5 +205,5 @@ class TestMediaInfoAPI(unittest.TestCase):
 
         self.assertEqual(
             information,
-            _mediaInfoAPI.MediaInfoAPI.getMediaInformation(path)[0],
+            _media_info_api.MediaInfoAPI.getMediaInformation(path)[0],
         )

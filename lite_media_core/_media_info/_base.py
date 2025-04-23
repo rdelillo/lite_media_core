@@ -19,13 +19,8 @@ class AbstractRegexIdentifier:
     command = None
 
     @classmethod
-    def _regexMatches(cls, regex, reference):
+    def _regex_matches(cls, regex: str, reference: str) -> dict:
         """ Helper, find regex matches in a reference string.
-
-        :param str regex: The regex to run.
-        :param str reference: The reference to analyze.
-        :return: All regex matches as dictionary.
-        :rtype: dict
         """
         match = re.search(regex, reference)
         if match:
@@ -35,24 +30,20 @@ class AbstractRegexIdentifier:
 
     @classmethod
     @abc.abstractmethod
-    def getMediaInformation(cls, inputFile):
+    def get_media_information(cls, input_path: str):
         """ Return information from provided media file.
 
-        :param str inputFile: The media file to get information from.
         :raise NotImplementedError: abstract method.
         """
         raise NotImplementedError
 
     @classmethod
-    def _runProcess(cls, inputFile):
+    def _run_process(cls, input_path: str) -> tuple:
         """ Run subprocess.
 
-            :param str inputFile: the input media file path.
-            :return:  stdout, stderr.
-            :rtype: tuple: (str, str)
-            :raise MediaInfoException: When subprocess fails.
+        :raise MediaInfoException: When subprocess fails.
         """
-        command = cls.command + " " + repr(inputFile)  # repr to preserve whitespaces
+        command = cls.command + " " + repr(input_path)  # repr to preserve whitespaces
         arguments = shlex.split(command)
 
         process = subprocess.Popen(
@@ -65,6 +56,6 @@ class AbstractRegexIdentifier:
 
         out, _ = process.communicate()
         if bool(process.returncode):
-            raise MediaInfoException("%s returned error code %d." % (command, process.returncode))
+            raise MediaInfoException(f"{command} returned error code {process.returncode}.")
 
         return out

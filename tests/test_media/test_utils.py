@@ -6,45 +6,46 @@ from lite_media_core import media
 class TestUtils(unittest.TestCase):
     """ Test lite_media_core.media._utils module.
     """
-    def test_chunkImageSequence_equalChunks(self):
-        """ Ensure an image sequence can be chunked using chunkImageSequence function.
+
+    def test_chunk_equals(self):
+        """ Ensure an image sequence can be chunked.
         """
-        imageSequence = media.ImageSequence.fromPath('sequence.%04d.exr 1001-1010')
-        expectedChunk01 = media.ImageSequence.fromPath('sequence.%04d.exr 1001-1005')
-        expectedChunk02 = media.ImageSequence.fromPath('sequence.%04d.exr 1006-1010')
-        chunkedSequences = media.chunkImageSequence(imageSequence, 5)
+        image_sequence = media.ImageSequence.from_path('sequence.%04d.exr 1001-1010')
+        chunk01 = media.ImageSequence.from_path('sequence.%04d.exr 1001-1005')
+        chunk02 = media.ImageSequence.from_path('sequence.%04d.exr 1006-1010')
+        chunks = image_sequence.chunk(5)
 
         self.assertEqual(
-            [chSeq.frameRange for chSeq in chunkedSequences],
+            [chSeq.frame_range for chSeq in chunks],
             [
-                expectedChunk01.frameRange,
-                expectedChunk02.frameRange,
+                chunk01.frame_range,
+                chunk02.frame_range,
             ]
         )
 
-    def test_chunkImageSequence_differentChunks(self):
-        """ Ensure different size chunks can be returned by chunkImageSequence
+    def test_chunk_different(self):
+        """ Ensure different size chunks can be returned.
         """
-        imageSequence = media.ImageSequence.fromPath('sequence.%04d.exr 1001-1010')
-        expectedChunk01 = media.ImageSequence.fromPath('sequence.%04d.exr 1001-1008')
-        expectedChunk02 = media.ImageSequence.fromPath('sequence.%04d.exr 1009-1010')
-        chunkedSequences = media.chunkImageSequence(imageSequence, 8)
+        image_sequence = media.ImageSequence.from_path('sequence.%04d.exr 1001-1010')
+        chunk01 = media.ImageSequence.from_path('sequence.%04d.exr 1001-1008')
+        chunk02 = media.ImageSequence.from_path('sequence.%04d.exr 1009-1010')
+        chunks = image_sequence.chunk(8)
 
         self.assertEqual(
-            [chSeq.frameRange for chSeq in chunkedSequences],
+            [chSeq.frame_range for chSeq in chunks],
             [
-                expectedChunk01.frameRange,
-                expectedChunk02.frameRange,
+                chunk01.frame_range,
+                chunk02.frame_range,
             ]
         )
 
-    def test_chunkImageSequence_singleChunk(self):
-        """ Ensure a single chunk is returned for single frame sequences.
+    def test_single_chunk(self):
+        """ Ensure a single chunk is returned for a single frame sequence.
         """
-        imageSequence = media.ImageSequence.fromPath('/path/to/sequence.1001.exr')
-        chunkedSequences = media.chunkImageSequence(imageSequence, 1)
+        image_sequence = media.ImageSequence.from_path('/path/to/sequence.1001.exr')
+        chunks = image_sequence.chunk(1)
 
         self.assertEqual(
-            chunkedSequences,
-            [imageSequence]
+            chunks,
+            [image_sequence]
         )

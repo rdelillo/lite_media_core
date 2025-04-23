@@ -1,5 +1,7 @@
 """ Resolution module.
 """
+from typing import Union
+
 import decimal
 
 
@@ -11,35 +13,33 @@ class ResolutionException(Exception):
 class Resolution(tuple):
     """ Resolution handling.
     """
-    def __new__(cls, width, height, pixelAspectRatio=1.0):
+
+    def __new__(
+        cls,
+        width: Union[str, float, int, decimal.Decimal],
+        height: Union[str, float, int, decimal.Decimal],
+        pixel_aspect_ratio: Union[str, float, int, decimal.Decimal] = 1.0
+    ):
         """ Create and return a new Resolution object.
 
-        :param width: The resolution width.
-        :type width: str or float or int or double
-        :param height: The resolution height.
-        :type height: str or float or int or double
-        :param pixelAspectRatio: An optional pixel aspect ratio.
-        :type pixelAspectRatio: str or float or int or double.
-        :return: the created Resolution object.
-        :rtype: :class:`Resolution`
         :raise ResolutionException: when the object could not be created.
         """
         try:
             resolution = tuple.__new__(cls, (int(width), int(height)))
-            resolution._pixelAspectRatio = float(pixelAspectRatio)
+            resolution._pixel_aspect_ratio = float(pixel_aspect_ratio)
             resolution._aspectRatio = None
             return resolution
 
         except ValueError as error:
             raise ResolutionException(str(error)) from error
 
-    def __str__(self):
+    def __str__(self) -> str:
         """ Represent current Resolution object as string.
 
         :return: The string representation.
         :rtype: str
         """
-        return "%sx%s" % (self.width, self.height)
+        return f"{self.width}x{self.height}"
 
     def __repr__(self):
         """ Represent current Resolution object.
@@ -50,38 +50,30 @@ class Resolution(tuple):
         return "<%s %s pixelAspectRatio=%d>" % (
             self.__class__.__name__,
             self,
-            self.pixelAspectRatio,
+            self.pixel_aspect_ratio,
         )
 
     @property
-    def width(self):
-        """
-        :return: The resolution width.
-        :rtype: int
+    def width(self) -> int:
+        """ The resolution width.
         """
         return self[0]
 
     @property
-    def height(self):
-        """
-        :return: The resolution height.
-        :rtype: int
+    def height(self) -> int:
+        """ The resolution height.
         """
         return self[1]
 
     @property
-    def pixelAspectRatio(self):
+    def pixel_aspect_ratio(self) -> float:
+        """ The pixel aspect ratio of the resolution.
         """
-        :return: The pixel aspect ratio.
-        :rtype: float
-        """
-        return self._pixelAspectRatio
+        return self._pixel_aspect_ratio
 
     @property
-    def aspectRatio(self):
-        """
-        :return: The resolution aspect ratio.
-        :rtype: :class:`decimal.Decimal`
+    def aspect_ratio(self) -> float:
+        """ The resolution aspect ratio.
         """
         if not self._aspectRatio:  # not often used so delayed computation
             aspectRatio = decimal.Decimal(self.width) / decimal.Decimal(self.height)
@@ -90,17 +82,14 @@ class Resolution(tuple):
         return self._aspectRatio
 
     @classmethod
-    def fromString(cls, resolutionStr):
+    def from_string(cls, resolution_str: str):
         """ Create a Resolution object from a resolution string.
 
-        :param str resolutionStr: The resolution string.
-        :return: The Resolution object.
-        :rtype: :class:`Resolution`
         :raise ResolutionException: when the resolution could not be identified.
         """
         try:
-            width, height = resolutionStr.split("x")
+            width, height = resolution_str.split("x")
             return cls(width, height)
 
         except (ValueError, ResolutionException) as error:
-            raise ResolutionException("Cannot create Resolution object from %r." % resolutionStr) from error
+            raise ResolutionException(f"Cannot create Resolution object from {resolution_str}.") from error

@@ -5,6 +5,8 @@ import os
 import tempfile
 import sys
 
+from typing import Optional
+
 from lite_media_core import rate as _rate
 from lite_media_core import resolution as _resolution
 from lite_media_core import timeCode as _timeCode
@@ -56,12 +58,10 @@ class EmbeddedMedia(_media.Media):
     """ Embedded media contained on an URL page.
     """
 
-    def __init__(self, url, mimeType=None):
+    def __init__(self, url: str, mime_type: str = None):
         """ Initialize a new Embedded object.
 
-            :param str path: The media url.
-            :param str mimeType: An optional media mime-type.
-            :raise UnsupportedMimeType: When the provided path is not a video media.
+        :raise UnsupportedMimeType: When the provided path is not a video media.
         """
         self._check_available()
         if not validators.url(url):
@@ -69,7 +69,7 @@ class EmbeddedMedia(_media.Media):
                 f'Cannot create an EmbeddedMedia from invalid url: {url}.'
             )
 
-        super().__init__(url, mimeType=mimeType)
+        super().__init__(url, mime_type=mime_type)
 
     @classmethod
     def _check_available(cls):
@@ -87,36 +87,33 @@ class EmbeddedAudio(EmbeddedMedia):
     """ Embedded audio stored on a server.
     """
 
-    def __init__(self, url, mimeType=None):
-        """ Initialize a new Embedded object.
+    def __init__(self, url: str, mime_type: str = None):
+        """ Initialize a new EmbeddedAudio object.
 
-            :param str path: The media url.
-            :param str mimeType: An optional media mime-type.
-            :raise UnsupportedMimeType: When the provided path is not a video media.
+        :raise UnsupportedMimeType: When the provided path is not a video media.
         """
-        self._audioProxy = None
-        super().__init__(url, mimeType=mimeType)
+        self._audio_proxy = None
+        super().__init__(url, mime_type=mime_type)
 
         # Delay information load.
-        # Gathering information from a specific media can be time-consuming (or even not possible
-        # when the media does not exist). However, users should still be able to create media objects
-        # skipping this step.
-        # The information is then computed on need, when specific attributes are queried.
+        # The information is computed on need, when a specific attribute is queried.
         self._info, self._metadata = None, None
 
         if self.type != "audio":
-            raise _media.UnsupportedMimeType("Cannot create an Audio media from %s (%s) "
-                 "valid types are %s." % (url, self.type, _audio.Audio.registeredMimeTypes))
+            raise _media.UnsupportedMimeType(
+                f"Cannot create an Audio media from {url} ({self.type}) "
+                f"valid types are {_audio.Audio.registered_mime_types}."
+            )
 
     def __del__(self):
         """ Ensure generated proxy is removed on delete.
         """
-        if self._audioProxy:
-            os.remove(self._audioProxy.path)
+        if self._audio_proxy:
+            os.remove(self._audio_proxy.path)
 
         del self
 
-    def _downloadProxy(self):
+    def _download_proxy(self) -> Optional[_audio.Audio]:
         """
         :return: An audio proxy.
         :rtype: :class:`lite_media_core.media.Audio` or None
@@ -124,59 +121,51 @@ class EmbeddedAudio(EmbeddedMedia):
         try:
             doc = requests.get(self.path, timeout=60)
             _, ext = os.path.splitext(self.path)
-            temporaryProxy = os.path.join(tempfile.mkdtemp(), "sample" + ext)
-            with open(temporaryProxy, "wb") as fHandler:
+            temporary_proxy = os.path.join(tempfile.mkdtemp(), "sample" + ext)
+            with open(temporary_proxy, "wb") as fHandler:
                 fHandler.write(doc.content)
 
-            return temporaryProxy
+            return temporary_proxy
 
         except Exception as error:
-            raise _media.MediaException("Cannot generate audio proxy for %s" % self) from error
+            raise _media.MediaException(f"Cannot generate audio proxy for {self}.") from error
 
-    def _getProxyInformation(self):
-        """ Gather audio information form the proxy
+    def _get_proxy_information(self):
+        """ Gather audio information from the proxy.
         """
-        if self._audioProxy is not None:
+        if self._audio_proxy is not None:
             return
 
-        proxyPath = self._downloadProxy()
-        self._audioProxy = _audio.Audio.fromPath(proxyPath)
+        proxy_path = self._download_proxy()
+        self._audio_proxy = _audio.Audio.from_path(proxy_path)
 
     @property
-    def duration(self):
-        """
-        :return: The audio file duration.
-        :rtype: float
+    def duration(self) -> float:
+        """ The audio file duration in seconds.
         """
         self._getProxyInformation()
         return self._audioProxy.duration
 
     @property
-    def conformedDuration(self):
+    def conformedDuration(self) -> _timeCode.TimeCode:
+        """ The audio file conformed duration as timecode (24fps).
         """
-        :return: The audio file conformed duration.
-        :rtype: `class:lite_media_core.timeCode.Timecode`
-        """
-        self._getProxyInformation()
-        return self._audioProxy.conformedDuration
+        self._get_proxy_information()
+        return self._audio_proxy.conformed_duration
 
     @property
-    def samplingRate(self):
+    def sampling_rate(self) -> int:
+        """ The audio file sampling rate.
         """
-        :return: The audio file sampling rate.
-        :rtype: int
-        """
-        self._getProxyInformation()
-        return self._audioProxy.samplingRate
+        self._get_proxy_information()
+        return self._audio_proxy.sampling_rate
 
     @property
-    def bitrate(self):
+    def bitrate(self) -> int:
+        """ The audio file bitrate.
         """
-        :return: The audio file bitrate.
-        :rtype: int
-        """
-        self._getProxyInformation()
-        return self._audioProxy.bitrate
+        self._get_proxy_information()
+        return self._audio_proxy.bitrate
 
 
 
@@ -184,14 +173,16 @@ class EmbeddedVideo(EmbeddedMedia):
     """ Embedded video contained on an URL page.
     """
 
-    def __init__(self, url, mimeType=None, full_extraction=True, use_proxy=False):  #pylint: disable=W0231
+    def __init__(
+        self,
+        url: str,
+        mime_type: str = None,
+        full_extraction: bool = True,
+        use_proxy: bool = False
+    ):
         """ Initialize a new Embedded object.
 
-            :param str path: The media url.
-            :param str mimeType: An optional media mime-type.
-            :param bool full_extraction: Should it perform a full extraction.
-            :param bool use_proxy: Shall it use the proxy or not.
-            :raise UnsupportedMimeType: When the provided path is not a video media.
+        :raise UnsupportedMimeType: When the provided path is not a video media.
         """
         self._check_available()
         options = {
@@ -223,23 +214,17 @@ class EmbeddedVideo(EmbeddedMedia):
         _ = str(self._settings) # force expand otherwise not picklable cause contain generator.
 
         mimeType = 'video/' + self._settings.get('extractor', 'unknown')
-        _media.Media.__init__(self, url, mimeType=mimeType)  #pylint: disable=W0233
+        _media.Media.__init__(self, url, mime_type=mime_type)  #pylint: disable=W0233
 
     @property
-    def codec(self):
+    def codec(self) -> str:
         """ The EmbeddedVideo video codec.
-
-        :return: The codec.
-        :rtype: str
         """
         return self._settings['vcodec']
 
     @property
-    def resolution(self):
+    def resolution(self) -> _resolution.Resolution:
         """ The EmbeddedVideo resolution.
-
-        :return: The resolution.
-        :rtype: :class:`lite_media_core.resolution.Resolution`
         """
         return _resolution.Resolution(
             self._settings['width'],
@@ -247,40 +232,28 @@ class EmbeddedVideo(EmbeddedMedia):
         )
 
     @property
-    def framerate(self):
+    def framerate(self) -> _rate.FrameRate:
         """ The EmbeddedVideo frame rate.
-
-        :return: The frame rate.
-        :rtype: :class:`lite_media_core.rate.FrameRate`
         """
-        return _rate.FrameRate.fromCustomRate(self._settings.get('fps',24))
+        return _rate.FrameRate.from_custom_rate(self._settings.get('fps', 24.0))
 
     @property
-    def framerange(self):
+    def framerange(self) -> _sequence.FrameRange:
         """ The EmbeddedVideo frameRange.
-
-        :return: The framerange.
-        :rtype: :class:`lite_media_core.path_utils.FrameRange`
         """
-        return _sequence.FrameRange(1, int(self.duration) - 1)  # 3 frames = 1-3
+        return _sequence.FrameRange(1, int(self.duration) - 1)
 
     @property
-    def duration(self):
+    def duration(self) -> _timeCode.TimeCode:
         """ The EmbeddedVideo duration.
-
-        :return: The duration.
-        :rtype: :class:`lite_media_core.timeCode.Timecode`
         """
-        return _timeCode.TimeCode.fromSeconds(
+        return _timeCode.TimeCode.from_seconds(
             self._settings['duration'],
             self._settings.get('fps', 24)
         )
 
     @property
-    def metadata(self):
+    def metadata(self) -> dict:
         """ The EmbeddedVideo metadata.
-
-        :return: The embedded video metadata.
-        :rtype: dict
         """
         return self._settings.copy()
