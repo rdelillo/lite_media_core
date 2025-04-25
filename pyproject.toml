@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "lite_media_core"
-description = "A handy python library to handle media."
+description = "A lightweight yet powerful media framework for developers."
 readme = "README.md"
 license = { text = "GPL-3.0-or-later" }
 requires-python = ">=3.6"
@@ -22,7 +22,7 @@ Homepage = "https://github.com/rdelillo/lite_media_core"
 [project.optional-dependencies]
 testing = ["pytest", "pytest-cov", "mock"]
 embedded = ["requests", "validators", "yt-dlp"]
-pylint = ["pylint"]
+lint = ["ruff"]
 
 [tool.setuptools]
 packages = ["lite_media_core"]
