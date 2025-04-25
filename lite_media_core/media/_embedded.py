@@ -6,7 +6,7 @@ import importlib
 import tempfile
 import sys
 
-from importlib import utils as _impt_utils
+from importlib import util as _impt_util
 from typing import Optional
 
 from lite_media_core import rate as _rate
@@ -20,7 +20,7 @@ from lite_media_core.media import _audio
 # "embedded_media" extra requires. We do not want
 # those dependencies most of the time.
 
-if _impt_utils.find_spec("yt_dlp"):
+if _impt_util.find_spec("yt_dlp"):
     requests = importlib.import_module("requests")
     validators = importlib.import_module("validators")
     yt_dlp = importlib.import_module("yt_dlp")
