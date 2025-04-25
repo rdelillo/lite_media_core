@@ -18,7 +18,7 @@ Whether you're building media automation tools, integrating transcoding features
 
 ### 🌟 Features
 
-- **Clean and intuitive API**: Get started in seconds, no magic, just Python.
+- **Clean and intuitive API**: Get started in seconds
 - **Powered by MediaInfo**: Delivers accurate, detailed metadata across formats
 - **Plug-and-play utilities**: Built-in helpers for timecode, resolution, and frame rate settings
 - **Cross-platform**: Windows, macOS, Linux
@@ -54,7 +54,24 @@ print("TimeCode as int (frame amount):", int(tc))  # 60 seconds * 24 fps = 1440
 ---
 
 
-### 🎓 For Developers
+### 💻 For Developers
+
+
+This project builds on powerful open-source tools:
+
+- [`MediaInfo`](https://mediaarea.net/en/MediaInfo) – cross-platform media metadata engine
+- [`pymediainfo`](https://github.com/sbraz/pymediainfo) – python bindings to MediaInfo
+- [`fileseq`](https://github.com/justinfx/fileseq) – image sequence handling with frame padding
+- [`timecode`](https://github.com/eoyilmaz/timecode) – precise and robust timecode utilities
+
+Clone and install in dev mode:
+
+```bash
+git clone https://github.com/rdelillo/lite_media_core.git
+cd lite_media_core
+pip install -e .[testing]
+
+
 
 ```bash
 git clone https://github.com/rdelillo/lite_media_core.git
