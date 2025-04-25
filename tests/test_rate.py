@@ -1,6 +1,7 @@
 """ Test lite_media_core.rate module.
 """
 import unittest
+import math
 
 from lite_media_core import rate
 
@@ -104,3 +105,22 @@ class TestFrameRate(unittest.TestCase):
         """
         customRate = rate.FrameRate.from_custom_value(33.33)  # non-standard frame rate
         self.assertEqual("<FrameRate 33.33 fps custom rate>", repr(customRate))
+
+    def test_from_custom_value_invalid_inputs(self):
+        """ Ensure from_custom_value method with invalid inputs (non-numeric, None, NaN, infinity).
+        """
+        # Invalid non-numeric string
+        with self.assertRaises(rate.FrameRateException):
+            rate.FrameRate.from_custom_value("not_a_number")
+
+        # Invalid None input
+        with self.assertRaises(rate.FrameRateException):
+            rate.FrameRate.from_custom_value(None)
+
+        # Edge case: NaN input
+        with self.assertRaises(rate.FrameRateException):
+            rate.FrameRate.from_custom_value(math.nan)
+
+        # Edge case: Infinity input
+        with self.assertRaises(rate.FrameRateException):
+            rate.FrameRate.from_custom_value(math.inf)
