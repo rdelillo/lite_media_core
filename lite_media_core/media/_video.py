@@ -39,7 +39,7 @@ class Movie(_image_media.ImageMedia):
         return self._info["codec"]
 
     @property
-    def framerate(self) -> rate.FrameRate:
+    def frame_rate(self) -> rate.FrameRate:
         """ The movie frame rate.
         """
         return self.duration.frame_rate

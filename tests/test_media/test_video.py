@@ -50,11 +50,11 @@ class TestMovie(unittest.TestCase):
             (self.movie.duration, self.movie_tc.duration),
         )
 
-    def test_frameRate(self):
+    def test_frame_rate(self):
         """ Ensure frame rate can be retrieved from a video media.
         """
         expected = rate.FrameRate(24)
-        self.assertEqual(expected, self.movie.framerate)
+        self.assertEqual(expected, self.movie.frame_rate)
 
     def test_timecode_None(self):
         """ Ensure a Movie with no embedded timecode return None.
@@ -67,7 +67,7 @@ class TestMovie(unittest.TestCase):
         expected = timecode.Timecode("01:02:03:04", 24)
         self.assertEqual(expected, self.movie_tc.timecode)
 
-    def test_frameRange(self):
+    def test_frame_range(self):
         """ Ensure a frame range can be retrieved from a Movie.
         """
         self.assertEqual(
@@ -75,7 +75,7 @@ class TestMovie(unittest.TestCase):
             self.movie.frame_range
         )
 
-    def test_frameRange_embeddedTc(self):
+    def test_frame_range_embeddedTc(self):
         """ Ensure a frame range can be retrieved from a Movie embedding a timecode.
         """
         self.assertEqual(
