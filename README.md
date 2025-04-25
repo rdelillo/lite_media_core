@@ -54,9 +54,7 @@ print("TimeCode as int (frame amount):", int(tc))  # 60 seconds * 24 fps = 1440
 
 ---
 
-
-### 💻 For Developers
-
+### Credits
 
 This project builds on powerful open-source tools:
 
@@ -65,14 +63,11 @@ This project builds on powerful open-source tools:
 * [`fileseq`](https://github.com/justinfx/fileseq): image sequence handling with frame padding
 * [`timecode`](https://github.com/eoyilmaz/timecode): precise and robust timecode utilities
 
+
+### 💻 For Developers
+
+
 Clone and install in dev mode:
-
-```bash
-git clone https://github.com/rdelillo/lite_media_core.git
-cd lite_media_core
-pip install -e .[testing]
-
-
 
 ```bash
 git clone https://github.com/rdelillo/lite_media_core.git
