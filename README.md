@@ -34,46 +34,28 @@ pip install lite_media_core
 ```
 
 ```python
-from lite_media_core import Resolution, TimeCode
+# TODO improve example quick start.
+from lite_media_core import Resolution, Timecode
 
 res = Resolution(1920, 1080)
-tc = TimeCode("25", "00:01:00:00")
+tc = Timecode("00:01:00:00", 24.0)
 
-print("Resolution:", res)
-print("TimeCode:", tc.frame_number)
+print("Resolution:", res)  # 1920x1080
+print("TimeCode as int (frame amount):", int(tc))  # 60 seconds * 24 fps = 1440
 ```
 
 ---
 
-### 💡 Use Cases
+### 💡 Roadmap
 
-- Video metadata extraction tools
-- Integration into editors or custom apps
-- Automated batch media workflows
-- Lightweight CLI or API utilities
+- [ ] Support media from URL via embedded features
+- [ ] Automated batch media workflows
+- [ ] Lightweight CLI or API utilities
 
 ---
-
-
-### 🧪 Example Usage
-
-```python
-from lite_media_core import media
-
-media_file = media.open("example.mov")
-
-if media_file:
-    print("Duration:", media_file.duration)
-    print("Resolution:", media_file.resolution)
-    print("Timecode Start:", media_file.timecode_start)
-else:
-    print("Unable to load media.")
-```
 
 
 ### 🎓 For Developers
-
-Clone and install in dev mode:
 
 ```bash
 git clone https://github.com/rdelillo/lite_media_core.git
