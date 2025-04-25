@@ -14,6 +14,7 @@
 `lite_media_core` is a minimalist, developer-focused Python framework for handling media operations simply and intuitively. Designed to be lightweight, easy to integrate, and powerful enough for real-world workflows.
 
 Whether you're building media automation tools, integrating transcoding features, or scripting quick metadata checkers, `lite_media_core` helps you get there faster with less friction.
+
 ---
 
 ### 🌟 Features
@@ -59,10 +60,10 @@ print("TimeCode as int (frame amount):", int(tc))  # 60 seconds * 24 fps = 1440
 
 This project builds on powerful open-source tools:
 
-- [`MediaInfo`](https://mediaarea.net/en/MediaInfo) – cross-platform media metadata engine
-- [`pymediainfo`](https://github.com/sbraz/pymediainfo) – python bindings to MediaInfo
-- [`fileseq`](https://github.com/justinfx/fileseq) – image sequence handling with frame padding
-- [`timecode`](https://github.com/eoyilmaz/timecode) – precise and robust timecode utilities
+* [`MediaInfo`](https://mediaarea.net/en/MediaInfo): cross-platform media metadata engine
+* [`pymediainfo`](https://github.com/sbraz/pymediainfo): python bindings to MediaInfo
+* [`fileseq`](https://github.com/justinfx/fileseq): image sequence handling with frame padding
+* [`timecode`](https://github.com/eoyilmaz/timecode): precise and robust timecode utilities
 
 Clone and install in dev mode:
 
