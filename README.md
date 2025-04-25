@@ -35,6 +35,7 @@ Download sample video (optional):
 <table border="0" cellspacing="0" cellpadding="0" style="border: none;">
 <tr>
 <td width="50%">
+
 ```bash
 pip install requests
 ```
@@ -66,18 +67,19 @@ with open(output_path, "wb") as f:
 </tr>
 </table>
 
+Inspect video:
 ```python
 from lite_media_core import Media, Movie
 
 # Load the media using lite_media_core
-media = Media.from_path(output_path)
+media = Media.from_path("video.mp4")
 
 # Check that the media was successfully loaded and is of type Movie
 assert media.exists and isinstance(media, Movie)
 
 # Print basic media properties
 print(f"Loaded media: {media.path}")
-print(f"Type: {type(media).__name__}")
+print(f"Type: {type(media)}")
 print(f"Resolution: {media.resolution}")
 print(f"Codec: {media.codec}")
 print(f"Duration: {media.duration} ({media.duration.seconds} seconds)")
