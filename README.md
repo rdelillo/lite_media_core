@@ -17,7 +17,7 @@ Whether you're building media automation tools, integrating transcoding features
 
 ### 🌟 Features
 
-- **Clean and intuitive API**: Get started in seconds
+- **Clean and intuitive API**: Handles image, image sequence, video, audio... Get started in seconds
 - **Powered by MediaInfo**: Delivers accurate, detailed metadata across formats
 - **Plug-and-play utilities**: Built-in helpers for timecode, resolution, and frame rate settings
 - **Cross-platform**: Windows, macOS, Linux
@@ -31,7 +31,7 @@ Whether you're building media automation tools, integrating transcoding features
 pip install lite_media_core
 ```
 
-Download sample video (optional):
+(Optional) Download sample video:
 <table border="0" cellspacing="0" cellpadding="0" style="border: none;">
 <tr>
 <td width="50%">
