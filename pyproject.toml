@@ -22,7 +22,7 @@ Homepage = "https://github.com/rdelillo/lite_media_core"
 [project.optional-dependencies]
 testing = ["pytest", "pytest-cov", "mock"]
 embedded = ["requests", "validators", "yt-dlp"]
-pylint = ["pylint"]
+lint = ["ruff"]
 
 [tool.setuptools]
 packages = ["lite_media_core"]
