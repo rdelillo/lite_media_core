@@ -74,6 +74,21 @@ class _AbstractFrameRate:
 
 
 class FrameRate(_AbstractFrameRate):
+    """ Frame handling.
+    """
+
+    @classmethod
+    def from_custom_value(cls, rate: Union[str, float, int, decimal.Decimal]):
+        """ Create a frame rate object from a any value.
+        """
+        try:
+            return StandardFrameRate(rate)
+
+        except FrameRateException:  # non-standard
+            return FrameRate(rate, name="custom rate")
+
+
+class StandardFrameRate(_AbstractFrameRate):
     """ Industry standard frame rates handling.
     """
 
@@ -91,26 +106,6 @@ class FrameRate(_AbstractFrameRate):
 
         except TypeError as error:
             raise FrameRateException(f"Cannot find standard frame rate from {rate}.") from error
-
-    @classmethod
-    def fromCustomRate(cls, rate):
-        """ Create a frame rate object from a custom rate value.
-
-        :param rate: The rate value.
-        :type rate: str or float or int or decimal.Decimal
-        :return: The frame rate object.
-        :rtype: :class:`FrameRate` or :class:`NonStandardFrameRate`
-        """
-        try:
-            return cls(rate)
-
-        except FrameRateException:
-            return NonStandardFrameRate(rate, name="custom rate")
-
-
-class NonStandardFrameRate(_AbstractFrameRate):
-    """ Non-standard frame rates handling.
-    """
 
 
 def _conform_to_industry_rate(rate:  Union[str, float, decimal.Decimal]) -> Optional[tuple]:
