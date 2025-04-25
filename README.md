@@ -13,15 +13,14 @@
 
 `lite_media_core` is a minimalist, developer-focused Python framework for handling media operations simply and intuitively. Designed to be lightweight, easy to integrate, and powerful enough for real-world workflows.
 
-Whether you're building media automation tools, integrating transcoding features, or extracting metadata, `lite_media_core` is here to simplify your work.
-
+Whether you're building media automation tools, integrating transcoding features, or scripting quick metadata checkers, `lite_media_core` helps you get there faster with less friction.
 ---
 
 ### 🌟 Features
 
-- **Clean and intuitive API**: Get started in seconds
-- **Developer-oriented design**: No magic, just Python
-- **Plug-and-play utilities**: Covenient utils for timecode, resolution, frame rate...
+- **Clean and intuitive API**: Get started in seconds, no magic, just Python.
+- **Powered by MediaInfo**: Delivers accurate, detailed metadata across formats
+- **Plug-and-play utilities**: Built-in helpers for timecode, resolution, and frame rate settings
 - **Cross-platform**: Windows, macOS, Linux
 - **Tested and linted**
 
