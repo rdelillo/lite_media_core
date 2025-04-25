@@ -5,8 +5,6 @@ from typing import Union
 from lite_media_core.path_utils.sequence import Sequence, _utils
 from lite_media_core.path_utils.single_file import SingleFile
 
-__all__ = ["SingleFile", "Sequence", "fromString", "getSequences"]
-
 
 def from_string(str_data: str) -> Union[Sequence, SingleFile]:
     """ Initialize a SingleFile or a Sequence object from a string.
@@ -35,3 +33,6 @@ def get_sequences(data: Union[str, list]) -> list:
             yield Sequence.from_string(remain)
         except ValueError:
             yield remain
+
+
+__all__ = ["SingleFile", "Sequence", "from_string", "get_sequences"]
