@@ -6,7 +6,7 @@ from lite_media_core.media import _image_media
 from lite_media_core.media import UnsupportedMimeType
 from lite_media_core.path_utils import sequence
 from lite_media_core import rate
-from lite_media_core import timeCode
+from lite_media_core import timecode
 
 
 class Movie(_image_media.ImageMedia):
@@ -45,21 +45,21 @@ class Movie(_image_media.ImageMedia):
         return self.duration.frame_rate
 
     @property
-    def duration(self) -> timeCode.TimeCode:
+    def duration(self) -> timecode.Timecode:
         """ The movie duration.
         """
         self._set_media_information()
         tcIn = int(self._info['frames']) if self._info['frames'] else self._info['duration']
-        return timeCode.TimeCode(tcIn, self._info["frameRate"])
+        return timecode.Timecode(tcIn, self._info["frameRate"])
 
     @property
-    def timecode(self) -> Optional[timeCode.TimeCode]:
+    def timecode(self) -> Optional[timecode.Timecode]:
         """ An embedded timecode in the Movie or None.
         """
         self._set_media_information()
         if self._info.get("timecode"):
             frameRate = self._info.get("tcFrameRate") or self._info["frameRate"]
-            return timeCode.TimeCode(self._info["timecode"], frameRate)
+            return timecode.Timecode(self._info["timecode"], frameRate)
 
         return None
 

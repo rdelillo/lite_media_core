@@ -6,7 +6,7 @@ import unittest
 from lite_media_core import path_utils
 from lite_media_core import media
 from lite_media_core import rate
-from lite_media_core import timeCode
+from lite_media_core import timecode
 
 
 class TestMovie(unittest.TestCase):
@@ -42,8 +42,8 @@ class TestMovie(unittest.TestCase):
     def test_duration(self):
         """ Ensure duration can be retrieved from a video media.
         """
-        expected1 = timeCode.TimeCode("00:00:00:01", 24)
-        expected2 = timeCode.TimeCode("00:00:00:02", 24)
+        expected1 = timecode.Timecode("00:00:00:01", 24)
+        expected2 = timecode.Timecode("00:00:00:02", 24)
 
         self.assertEqual(
             (expected1, expected2),
@@ -56,15 +56,15 @@ class TestMovie(unittest.TestCase):
         expected = rate.FrameRate(24)
         self.assertEqual(expected, self.movie.framerate)
 
-    def test_timeCode_None(self):
+    def test_timecode_None(self):
         """ Ensure a Movie with no embedded timecode return None.
         """
         self.assertIsNone(self.movie.timecode)
 
-    def test_timeCode(self):
+    def test_timecode(self):
         """ Ensure an embedded timecode can be retrieved from a Movie.
         """
-        expected = timeCode.TimeCode("01:02:03:04", 24)
+        expected = timecode.Timecode("01:02:03:04", 24)
         self.assertEqual(expected, self.movie_tc.timecode)
 
     def test_frameRange(self):
