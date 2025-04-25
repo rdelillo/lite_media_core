@@ -164,7 +164,7 @@ def _validate_sequence(image_media_list: list, strict: bool = True) -> bool:
             if len(set(resolutions)) > 1:
                 raise ValueError(f"Inconsistent resolutions found in sequence: {set(resolutions)}.")
 
-    except ValueError as error:
+    except ValueError:
         if not strict:
             return False
 

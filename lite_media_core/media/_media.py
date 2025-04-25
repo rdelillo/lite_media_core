@@ -2,7 +2,6 @@
 """
 from typing import Union
 
-import logging
 import os
 
 from lite_media_core.path_utils import sequence

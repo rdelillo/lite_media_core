@@ -404,7 +404,7 @@ class TestSequenceInit(unittest.TestCase):
     def test__init__invalid_fileseq_sequence(self):
         """ Ensure a Sequence object cannot be initialized from a FileSeq sequence without any frame info.
         """
-        with self.assertRaises(ValueError) as error:
+        with self.assertRaises(ValueError):
             sequence.Sequence(fileseq.FileSequence("/a/single/file"))
 
     def test_from_string_fails(self):

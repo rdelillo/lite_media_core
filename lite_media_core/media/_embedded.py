@@ -2,9 +2,11 @@
 """
 import contextlib
 import os
+import importlib
 import tempfile
 import sys
 
+from importlib import utils as _impt_utils
 from typing import Optional
 
 from lite_media_core import rate as _rate
@@ -17,17 +19,15 @@ from lite_media_core.media import _audio
 # Ensure lite_media_core was installed with the
 # "embedded_media" extra requires. We do not want
 # those dependencies most of the time.
-try:
-    import requests
-    import validators
-    import yt_dlp
 
-except ModuleNotFoundError:
-    _IS_IMPORTED = False
-
-else:
+if _impt_utils.find_spec("yt_dlp"):
+    requests = importlib.import_module("requests")
+    validators = importlib.import_module("validators")
+    yt_dlp = importlib.import_module("yt_dlp")
     _IS_IMPORTED = True
 
+else:
+    _IS_IMPORTED = False
 
 class UnsupportedUrl(_media.UnsupportedMimeType):
     """ Overrides UnsupportedMimeType for URL issues.
@@ -213,7 +213,7 @@ class EmbeddedVideo(EmbeddedMedia):
         self._settings = dict(data)
         _ = str(self._settings) # force expand otherwise not picklable cause contain generator.
 
-        mimeType = 'video/' + self._settings.get('extractor', 'unknown')
+        mime_type = 'video/' + self._settings.get('extractor', 'unknown')
         _media.Media.__init__(self, url, mime_type=mime_type)  #pylint: disable=W0233
 
     @property

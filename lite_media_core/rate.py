@@ -58,7 +58,7 @@ class _AbstractFrameRate:
         try:
             return float(self) == float(other)
 
-        except (ValueError, TypeError) as error:
+        except (ValueError, TypeError):
             raise ValueError("Invalid comparison between FrameRate and {other}.")
 
     def __ne__(self, other: object) -> bool:

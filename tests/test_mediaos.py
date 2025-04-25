@@ -1,7 +1,6 @@
 """ Test lite_media_core.mediaos module.
 """
 import os
-import sys
 import tempfile
 import unittest
 

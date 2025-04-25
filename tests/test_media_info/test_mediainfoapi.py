@@ -4,7 +4,6 @@
 import os
 import tempfile
 from datetime import datetime
-import collections
 import unittest
 
 from lite_media_core._media_info import _base

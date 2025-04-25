@@ -1,9 +1,12 @@
 """ MediaInfo based media info inspector.
 """
-import collections
 import os
 import ctypes
 import sys
+
+from lite_media_core._media_info import _base
+
+from pymediainfo import MediaInfo
 
 
 def  __get_library_paths(os_is_nt):
@@ -45,10 +48,7 @@ def _get_library_paths(os_is_nt):
 
 
 # Patch to redirect to current libraries.
-from pymediainfo import MediaInfo  # pylint: disable=C0413
-MediaInfo._get_library_paths = _get_library_paths  # pylint: disable=W0212
-
-from lite_media_core._media_info import _base  # pylint: disable=C0413
+MediaInfo._get_library_paths = _get_library_paths
 
 
 class MediaInfoAPI(_base.AbstractRegexIdentifier):

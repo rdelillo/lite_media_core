@@ -1,11 +1,8 @@
 """ Test lite_media_core.media._image_media module.
 """
 import os
-import tempfile
-import platform
 import unittest
 
-import mock
 
 import lite_media_core.path_utils
 

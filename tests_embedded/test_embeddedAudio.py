@@ -1,6 +1,5 @@
 """ Test lite_media_core.media._embedded module.
 """
-import os
 import unittest
 
 from lite_media_core import media

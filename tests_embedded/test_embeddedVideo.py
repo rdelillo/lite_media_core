@@ -1,6 +1,5 @@
 """ Test lite_media_core.media._embedded module.
 """
-import os
 import unittest
 
 import datetime
@@ -124,7 +123,7 @@ class TestEmbeddedVideo(unittest.TestCase):
         """ Ensure an incomplete url resolve does not take too much time.
         """
         before = datetime.datetime.now()
-        embeddedVideo = media.EmbeddedVideo(
+        _ = media.EmbeddedVideo(
             "https://www.youtube.com/watch?v=tmSm-tnifVk&list=RDtmSm-tnifVk&start_radio=1",
             full_extraction=False
         )
