@@ -27,6 +27,10 @@ Whether you're building media automation tools, integrating transcoding features
 
 ### ⚡ Quick Start
 
+<table>
+<tr>
+<td width="50%">
+
 ```bash
 pip install lite_media_core
 ```
@@ -41,6 +45,12 @@ tc = Timecode("00:01:00:00", 24.0)
 print("Resolution:", res)  # 1920x1080
 print("TimeCode as int (frame amount):", int(tc))  # 60 seconds * 24 fps = 1440
 ```
+</td>
+<td width="50%" align="center">
+    <a href="docs/quickstart.mp4"> <img src="docs/quickstart_placeholder.jpeg" alt="Example video preview" width="100%"> </a> <sub><i>Click to watch video.</i></sub>
+</td>
+</tr>
+</table>
 
 ---
 
