@@ -1,57 +1,52 @@
 """ Test lite_media_core.rate module.
 """
 import unittest
+import math
 
 from lite_media_core import rate
 
 
-class TestFrameRate(unittest.TestCase):
+class TestStandardFrameRate(unittest.TestCase):
     """ Test basic frame rate usage.
     """
-    def test_standardRate_fromFloat(self):
+    def test_standard_rate_from_float(self):
         """ Ensure a standard frame rate object can be created from a float.
         """
-        frameRate = rate.FrameRate(24.0)
+        frameRate = rate.StandardFrameRate(24.0)
         self.assertEqual(
             ("Film", 24.0),
             (frameRate.name, float(frameRate)),
         )
 
-    def test_standardRate_fromInt(self):
+    def test_standard_rate_from_int(self):
         """ Ensure a standard frame rate object can be created from an int.
         """
-        frameRate = rate.FrameRate(24)
+        frameRate = rate.StandardFrameRate(24)
         self.assertEqual(
             ("Film", 24.0),
             (frameRate.name, float(frameRate)),
         )
 
-    def test_standardRate_fromStr(self):
+    def test_standard_rate_from_str(self):
         """ Ensure a standard frame rate object can be created from a str.
         """
-        frameRate = rate.FrameRate("24")
+        frameRate = rate.StandardFrameRate("24")
         self.assertEqual(
             ("Film", 24.0),
             (frameRate.name, float(frameRate)),
         )
 
-    def test_standardRate_failsIncorrectValue(self):
+    def test_standard_rate_failsIncorrectValue(self):
         """ Ensure a frame rate object init fails when initialized from invalid value.
         """
-        self.assertRaises(
-            rate.FrameRateException,
-            rate.FrameRate,
-            "incorrectRateValue",  # invalid frame rate
-        )
+        with self.assertRaises(rate.FrameRateException):
+            _ = rate.StandardFrameRate("incorrect_rate_value")
 
-    def test_standardRate_failsNonStandard(self):
+    def test_standard_rate_failsNonStandard(self):
         """ Ensure a frame rate object init fails when initialized from non-standard rate value.
         """
-        self.assertRaises(
-            rate.FrameRateException,
-            rate.FrameRate,
-            33.3,  # non-standard frame rate
-        )
+        with self.assertRaises(rate.FrameRateException):
+            _ = rate.StandardFrameRate(33.3)  # non-standard frame rate
 
     def test_representsAsString(self):
         """ Ensure a standard frame rate can be represented as string.
@@ -62,8 +57,8 @@ class TestFrameRate(unittest.TestCase):
     def test_represents(self):
         """ Ensure a standard frame rate can be represented.
         """
-        frameRate = rate.FrameRate(50.0)
-        self.assertEqual("<FrameRate 50.0 fps HD-TV>", repr(frameRate))
+        frameRate = rate.StandardFrameRate(50.0)
+        self.assertEqual("<StandardFrameRate 50.0 fps HD-TV>", repr(frameRate))
 
     def test_NtscRounding(self):
         """ Ensure NTSC rounding is correctly handled.
@@ -91,25 +86,41 @@ class TestFrameRate(unittest.TestCase):
     def test_equals_fails(self):
         """ Ensure an invalid comparison between FrameRate and other type fails.
         """
-        frameRate = rate.FrameRate(23.98)
-        self.assertRaises(
-            ValueError,
-            frameRate.__eq__,
-            "wrongComparison",
-        )
+        frame_rate = rate.FrameRate(23.98)
+        with self.assertRaises(ValueError):
+            frame_rate == "value_string"
 
 
-class TestNonStandardFrameRate(unittest.TestCase):
+class TestFrameRate(unittest.TestCase):
     """ Test non-standard frame rate usage.
     """
-    def test_createRate(self):
+    def test_create_rate(self):
         """ Ensure a non-standard rate object can be created from the FrameRate factory.
         """
-        customRate = rate.FrameRate.fromCustomRate(12.0)  # non-standard frame rate
-        self.assertTrue(isinstance(customRate, rate.NonStandardFrameRate))
+        customRate = rate.FrameRate.from_custom_value(12.0)  # non-standard frame rate
+        self.assertTrue(isinstance(customRate, rate.FrameRate))
 
     def test_representation(self):
         """ Ensure a custom frame rate object can be represented.
         """
-        customRate = rate.FrameRate.fromCustomRate(33.33)  # non-standard frame rate
-        self.assertEqual("<NonStandardFrameRate 33.33 fps custom rate>", repr(customRate))
+        customRate = rate.FrameRate.from_custom_value(33.33)  # non-standard frame rate
+        self.assertEqual("<FrameRate 33.33 fps custom rate>", repr(customRate))
+
+    def test_from_custom_value_invalid_inputs(self):
+        """ Ensure from_custom_value method with invalid inputs (non-numeric, None, NaN, infinity).
+        """
+        # Invalid non-numeric string
+        with self.assertRaises(rate.FrameRateException):
+            rate.FrameRate.from_custom_value("not_a_number")
+
+        # Invalid None input
+        with self.assertRaises(rate.FrameRateException):
+            rate.FrameRate.from_custom_value(None)
+
+        # Edge case: NaN input
+        with self.assertRaises(rate.FrameRateException):
+            rate.FrameRate.from_custom_value(math.nan)
+
+        # Edge case: Infinity input
+        with self.assertRaises(rate.FrameRateException):
+            rate.FrameRate.from_custom_value(math.inf)

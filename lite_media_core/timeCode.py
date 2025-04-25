@@ -151,8 +151,8 @@ class TimeCode:
         :return: The Timecode object.
         :rtype: :class:`Timecode`
         """
-        if not isinstance(frame_rate, (rate.FrameRate, rate.NonStandardFrameRate)):
-            frame_rate = rate.FrameRate(frame_rate)
+        if not isinstance(frame_rate, rate.FrameRate):
+            frame_rate = rate.FrameRate.from_custom_value(frame_rate)
 
         value_frames = math.ceil(value_seconds * float(frame_rate))
         return cls(int(value_frames), frame_rate)
@@ -166,9 +166,9 @@ def _check_tc_parameters(tc_value: Union[str, int], tc_rate: Union[float, int, r
     if not isinstance(tc_value, (int, str)):
         raise TimecodeException(f"Invalid timecode value {tc_value}, should be int or str.")
 
-    if not isinstance(tc_rate, (rate.FrameRate, rate.NonStandardFrameRate)):
+    if not isinstance(tc_rate, rate.FrameRate):
         try:
-            tc_rate = rate.FrameRate.fromCustomRate(tc_rate)
+            tc_rate = rate.FrameRate.from_custom_value(tc_rate)
 
         except rate.FrameRateException as error:
             raise TimecodeException("Invalid frame rate for timecode: %s." % error) from error
