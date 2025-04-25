@@ -27,26 +27,60 @@ Whether you're building media automation tools, integrating transcoding features
 
 ### ⚡ Quick Start
 
-<table>
+<table border="0" cellspacing="0" cellpadding="0" style="border: none;">
 <tr>
-<td width="50%">
+<td width="25%">
 
 ```bash
 pip install lite_media_core
 ```
 
+Download sample video (optional):
+```bash
+pip install requests
+```
+
 ```python
-# TODO improve example quick start.
-from lite_media_core import Resolution, Timecode
+import requests
+from lite_media_core import Media, Movie
 
-res = Resolution(1920, 1080)
-tc = Timecode("00:01:00:00", 24.0)
+# Download a sample video from the repository
+url = "https://github.com/rdelillo/lite_media_core/raw/refs/heads/main/docs/quickstart.mp4"
+output_path = "video.mp4"
 
-print("Resolution:", res)  # 1920x1080
-print("TimeCode as int (frame amount):", int(tc))  # 60 seconds * 24 fps = 1440
+response = requests.get(url, stream=True)
+response.raise_for_status()
+
+with open(output_path, "wb") as f:
+    for chunk in response.iter_content(chunk_size=8192):
+        if chunk:
+            f.write(chunk)
+
+print("Video downloaded:", output_path)
+
+# Load the media using lite_media_core
+media = Media.from_path(output_path)
+
+# Check that the media was successfully loaded and is of type Movie
+assert media.exists and isinstance(media, Movie)
+
+# Print basic media properties
+print(f"Loaded media: {media.path}")
+print(f"Type: {type(media).__name__}")
+print(f"Resolution: {media.resolution}")
+print(f"Codec: {media.codec}")
+print(f"Duration: {media.duration} ({media.duration.seconds} seconds)")
+
+# Frame-level information
+print(f"Frame rate: {media.frame_rate}")
+print(f"Estimated total frames: {int(media.duration)}")
+
+# (Optional) full metadata output
+print("Full metadata:")
+print(media.metadata)
 ```
 </td>
-<td width="50%" align="center">
+<td width="75%" align="center">
     <a href="docs/quickstart.mp4"> <img src="docs/quickstart_placeholder.jpeg" alt="Example video preview" width="100%"> </a> <sub><i>Click to watch video.</i></sub>
 </td>
 </tr>
