@@ -79,16 +79,15 @@ assert media.exists and isinstance(media, Movie)
 
 # Print basic media properties
 print(f"Loaded media: {media.path}")
-print(f"Type: {type(media)}")
 print(f"Resolution: {media.resolution}")
 print(f"Codec: {media.codec}")
 print(f"Duration: {media.duration} ({media.duration.seconds} seconds)")
 
 # Frame-level information
 print(f"Frame rate: {media.frame_rate}")
-print(f"Estimated total frames: {int(media.duration)}")
+print(f"Total frames: {int(media.duration)}")
 
-# (Optional) full metadata output
+# (Optional) Full metadata
 print("Full metadata:")
 print(media.metadata)
 ```
