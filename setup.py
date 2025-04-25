@@ -15,7 +15,7 @@ setuptools.setup(
     ],
     extras_require={
         "testing": ["pytest", "pytest-cov", "mock"],
-        "embedded_media": ["requests", "validators", "yt-dlp"],
+        "embedded": ["requests", "validators", "yt-dlp"],
         "pylint": ["pylint"],
     },
     python_requires=">=3.6",
