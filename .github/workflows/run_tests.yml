@@ -27,7 +27,7 @@ jobs:
 
       - name: Run Pytest with coverage
         run: |
-          pytest --cov=lite_media_core --cov-append --cov-report=term
+          pytest --cov=lite_media_core --cov-append --cov-report=term ./tests
           cp .coverage .coverage.regular
 
       - name: Install dependencies (embedded)
@@ -36,7 +36,7 @@ jobs:
 
       - name: Run Pytest with coverage (embedded)
         run: |
-          pytest --cov=lite_media_core --cov-append --cov-report=term
+          pytest --cov=lite_media_core --cov-append --cov-report=term ./tests_embedded
           cp .coverage .coverage.embedded
 
       - name: Combine coverage
