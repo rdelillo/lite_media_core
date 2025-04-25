@@ -27,15 +27,14 @@ Whether you're building media automation tools, integrating transcoding features
 
 ### ⚡ Quick Start
 
-<table border="0" cellspacing="0" cellpadding="0" style="border: none;">
-<tr>
-<td width="25%">
-
 ```bash
 pip install lite_media_core
 ```
 
 Download sample video (optional):
+<table border="0" cellspacing="0" cellpadding="0" style="border: none;">
+<tr>
+<td width="50%">
 ```bash
 pip install requests
 ```
@@ -45,7 +44,10 @@ import requests
 from lite_media_core import Media, Movie
 
 # Download a sample video from the repository
-url = "https://github.com/rdelillo/lite_media_core/raw/refs/heads/main/docs/quickstart.mp4"
+url = (
+    "https://github.com/rdelillo/lite_media_core/"
+    "raw/refs/heads/main/docs/quickstart.mp4"
+)
 output_path = "video.mp4"
 
 response = requests.get(url, stream=True)
@@ -55,8 +57,17 @@ with open(output_path, "wb") as f:
     for chunk in response.iter_content(chunk_size=8192):
         if chunk:
             f.write(chunk)
+```
 
-print("Video downloaded:", output_path)
+</td>
+<td width="75%" align="center">
+    <a href="docs/quickstart.mp4"> <img src="docs/quickstart_placeholder.jpeg" alt="Example video preview" width="100%"> </a> <sub><i>Click to watch video.</i></sub>
+</td>
+</tr>
+</table>
+
+```python
+from lite_media_core import Media, Movie
 
 # Load the media using lite_media_core
 media = Media.from_path(output_path)
@@ -79,12 +90,6 @@ print(f"Estimated total frames: {int(media.duration)}")
 print("Full metadata:")
 print(media.metadata)
 ```
-</td>
-<td width="75%" align="center">
-    <a href="docs/quickstart.mp4"> <img src="docs/quickstart_placeholder.jpeg" alt="Example video preview" width="100%"> </a> <sub><i>Click to watch video.</i></sub>
-</td>
-</tr>
-</table>
 
 ---
 
