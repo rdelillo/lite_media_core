@@ -3,9 +3,7 @@
 > A lightweight yet powerful media framework for developers.
 
 [![Build Status](https://github.com/rdelillo/lite_media_core/actions/workflows/run_tests.yml/badge.svg)](https://github.com/rdelillo/lite_media_core/actions/workflows/run_tests.yml)
-[![Lint Check](https://github.com/rdelillo/lite_media_core/actions/workflows/ruff.yml/badge.svg)](https://github.com/rdelillo/lite_media_core/actions/workflows/ruff.yml)
 [![Coverage](https://codecov.io/gh/rdelillo/lite_media_core/branch/main/graph/badge.svg)](https://codecov.io/gh/rdelillo/lite_media_core)
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
 ---
 
