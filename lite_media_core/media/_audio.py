@@ -1,6 +1,6 @@
 """ Audio module.
 """
-from lite_media_core import timeCode as _timeCode
+from lite_media_core import timecode as _timecode
 from lite_media_core import _media_info
 from lite_media_core.media import _media
 
@@ -49,11 +49,11 @@ class Audio(_media.Media):
         return self._info["duration_in_ms"] / 1000.0
 
     @property
-    def conformed_duration(self) -> _timeCode.TimeCode:
+    def conformed_duration(self) -> _timecode.Timecode:
         """ The audio duration as timecode (24fps).
         """
         self._set_media_information()
-        return _timeCode.TimeCode.from_seconds(
+        return _timecode.Timecode.from_seconds(
             self.duration,
             24.0,
         )

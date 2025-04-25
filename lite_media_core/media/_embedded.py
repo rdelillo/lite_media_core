@@ -11,7 +11,7 @@ from typing import Optional
 
 from lite_media_core import rate as _rate
 from lite_media_core import resolution as _resolution
-from lite_media_core import timeCode as _timeCode
+from lite_media_core import timecode as _timecode
 from lite_media_core.path_utils import sequence as _sequence
 from lite_media_core.media import _media
 from lite_media_core.media import _audio
@@ -147,7 +147,7 @@ class EmbeddedAudio(EmbeddedMedia):
         return self._audio_proxy.duration
 
     @property
-    def conformed_duration(self) -> _timeCode.TimeCode:
+    def conformed_duration(self) -> _timecode.Timecode:
         """ The audio file conformed duration as timecode (24fps).
         """
         self._get_proxy_information()
@@ -244,10 +244,10 @@ class EmbeddedVideo(EmbeddedMedia):
         return _sequence.FrameRange(1, int(self.duration) - 1)
 
     @property
-    def duration(self) -> _timeCode.TimeCode:
+    def duration(self) -> _timecode.Timecode:
         """ The EmbeddedVideo duration.
         """
-        return _timeCode.TimeCode.from_seconds(
+        return _timecode.Timecode.from_seconds(
             self._settings['duration'],
             self._settings.get('fps', 24)
         )
