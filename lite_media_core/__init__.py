@@ -8,9 +8,10 @@ from lite_media_core.media._embedded import EmbeddedVideo, EmbeddedAudio, Unsupp
 from lite_media_core.mediaos import walk, identify_from_files
 from lite_media_core.path_utils.sequence import Sequence
 from lite_media_core.path_utils.single_file import SingleFile
-from lite_media_core.rate import FrameRateException, FrameRate, NonStandardFrameRate
+from lite_media_core.rate import FrameRateException, FrameRate, StandardFrameRate
 from lite_media_core.resolution import ResolutionException, Resolution
-from lite_media_core.timecode import TimecodeException, TimeCode
+from lite_media_core.timecode import TimecodeException, Timecode
+
 
 __all__ = [
     # utils
@@ -36,7 +37,7 @@ __all__ = [
     # rate
     "FrameRateException",
     "FrameRate",
-    "NonStandardFrameRate",
+    "StandardFrameRate",
 
     # resolution
     "ResolutionException",
@@ -44,5 +45,5 @@ __all__ = [
 
     # timecode
     "TimecodeException",
-    "TimeCode"
+    "Timecode"
 ]
