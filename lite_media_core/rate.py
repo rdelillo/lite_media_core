@@ -79,7 +79,7 @@ class FrameRate(_AbstractFrameRate):
 
     @classmethod
     def from_custom_value(cls, rate: Union[str, float, int, decimal.Decimal]):
-        """ Create a frame rate object from a any value.
+        """ Create a frame rate object from any value.
         """
         try:
             return StandardFrameRate(rate)
