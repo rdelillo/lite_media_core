@@ -1,4 +1,4 @@
-""" Test lite_media_core._mediaInfo._mediaInfoAPI module.
+""" Test lite_media_core._mediaInfo._media_info_api module.
 """
 # pylint: disable=too-many-lines
 import os
@@ -25,7 +25,7 @@ _rawPath = os.path.join(
 )
 
 
-class TestMediaInfoAPI(unittest.TestCase):
+class Testmedia_info_api(unittest.TestCase):
     """ Test MediaInfo.
     """
 
@@ -53,7 +53,7 @@ class TestMediaInfoAPI(unittest.TestCase):
 
         self.assertEqual(
             information,
-            _media_info_api.MediaInfoAPI.getMediaInformation(path)[0],
+            _media_info_api.MediaInfoAPI.get_media_information(path)[0],
         )
 
     def test_jpg(self):
@@ -67,7 +67,7 @@ class TestMediaInfoAPI(unittest.TestCase):
 
         self.assertEqual(
             information,
-            _media_info_api.MediaInfoAPI.getMediaInformation(path)[0],
+            _media_info_api.MediaInfoAPI.get_media_information(path)[0],
         )
 
     def test_tiff(self):
@@ -81,7 +81,7 @@ class TestMediaInfoAPI(unittest.TestCase):
       
         self.assertEqual(
             information,
-            _media_info_api.MediaInfoAPI.getMediaInformation(path)[0],
+            _media_info_api.MediaInfoAPI.get_media_information(path)[0],
         )
 
     def test_dpx(self):
@@ -95,7 +95,7 @@ class TestMediaInfoAPI(unittest.TestCase):
         }
         self.assertEqual(
             information,
-            _media_info_api.MediaInfoAPI.getMediaInformation(path)[0],
+            _media_info_api.MediaInfoAPI.get_media_information(path)[0],
         )
 
     def test_dpx_anamorphic(self):
@@ -110,7 +110,7 @@ class TestMediaInfoAPI(unittest.TestCase):
         }
         self.assertEqual(
             information,
-            _media_info_api.MediaInfoAPI.getMediaInformation(path)[0],
+            _media_info_api.MediaInfoAPI.get_media_information(path)[0],
         )
 
     def test_exr(self):
@@ -124,7 +124,7 @@ class TestMediaInfoAPI(unittest.TestCase):
         }
         self.assertEqual(
             information,
-            _media_info_api.MediaInfoAPI.getMediaInformation(path)[0],
+            _media_info_api.MediaInfoAPI.get_media_information(path)[0],
         )
 
     def test_exr_anamorphic(self):
@@ -139,7 +139,7 @@ class TestMediaInfoAPI(unittest.TestCase):
 
         self.assertEqual(
             information,
-            _media_info_api.MediaInfoAPI.getMediaInformation(path)[0]
+            _media_info_api.MediaInfoAPI.get_media_information(path)[0]
         )
 
     def test_mov(self):
@@ -158,7 +158,7 @@ class TestMediaInfoAPI(unittest.TestCase):
 
         self.assertEqual(
             information,
-            _mediaInfoAPI.MediaInfoAPI.getMediaInformation(path)[0],
+            _media_info_api.MediaInfoAPI.get_media_information(path)[0],
         )
 
     def test_psd(self):
@@ -172,21 +172,19 @@ class TestMediaInfoAPI(unittest.TestCase):
 
         self.assertEqual(
             information,
-            _media_info_api.MediaInfoAPI.getMediaInformation(path)[0],
+            _media_info_api.MediaInfoAPI.get_media_information(path)[0],
         )
 
     def test_unsupportedFile_fails(self):
         """ Ensure trying to get information from an unsupported file fails.
         """
         for unsupported_format in [".ari", ".r3d", ".dng", ".CR2"]:
-            tmpFile = tempfile.NamedTemporaryFile(delete=False, suffix=".%s" % unsupported_format)
-            tmpFile.close()
 
-            self.assertRaises(
-                _base.MediaInfoException,
-                _media_info_api.MediaInfoAPI.getMediaInformation,
-                tmpFile.name,
-            )
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".%s" % unsupported_format) as tmpFile:
+                with self.assertRaises(_base.MediaInfoException):
+                    _media_info_api.MediaInfoAPI.get_media_information(
+                        tmpFile.name,
+                    )
 
     def test_mov_with_tc(self):
         """ Ensure MediaInfo can return information from a mov file.
@@ -205,5 +203,5 @@ class TestMediaInfoAPI(unittest.TestCase):
 
         self.assertEqual(
             information,
-            _media_info_api.MediaInfoAPI.getMediaInformation(path)[0],
+            _media_info_api.MediaInfoAPI.get_media_information(path)[0],
         )

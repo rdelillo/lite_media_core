@@ -28,7 +28,7 @@ def walk(top, topdown: bool = True, onerror: bool = None, followlinks: bool = Fa
 
             # Try to create a media object from file.
             try:
-                file_and_medias.append(media.Media.fromPath(path))
+                file_and_medias.append(media.Media.from_path(path))
 
             # Not a media, add into file list as a regular file.
             except media.UnsupportedMimeType:

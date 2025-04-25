@@ -232,4 +232,4 @@ class Sequence:
         Sequence.get_sequences('/path/to/a/directory/to/parse')
         Sequence.get_sequences(['file.1.ext', 'file.2.ext', 'aa.ext'])
         """
-        return list(cls.iterSequences(data))
+        return list(cls.iter_sequences(data))

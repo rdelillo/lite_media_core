@@ -78,7 +78,7 @@ class TestWalk(unittest.TestCase):
 
 
 class TestIdentifyFromFiles(unittest.TestCase):
-    """ Test mediaos.identifyFromFiles feature.
+    """ Test mediaos.identify_from_files feature.
     """
 
     def test_idenfityFromFiles(self):
@@ -90,7 +90,7 @@ class TestIdentifyFromFiles(unittest.TestCase):
             "movie.mov",
             "file.ext",
         ]
-        imgSeq, movie = mediaos.identifyFromFiles(filesList)  # pylint: disable=unbalanced-tuple-unpacking
+        imgSeq, movie = mediaos.identify_from_files(filesList)  # pylint: disable=unbalanced-tuple-unpacking
 
         self.assertEqual(
             (True, "sequence_img.##.png 1-2"),

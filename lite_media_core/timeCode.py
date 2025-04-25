@@ -191,8 +191,8 @@ def _conform_millisecond_timecode(tc_string: str, frame_rate: rate.FrameRate) ->
     """ Conform a 'HH:MM:SS.MSMS' timecode string to 'HH:MM:SS:FF'.
     """
     valid_timecode, milliseconds = tc_string.split(".")
-    tc = TimeCode.fromSeconds(float("0.%s" % milliseconds), frame_rate)
-    return valid_timeCode + ":%02d" % tc.frames
+    tc = TimeCode.from_seconds(float("0.%s" % milliseconds), frame_rate)
+    return valid_timecode + ":%02d" % tc.frames
 
 
 def is_valid_timecode_str(tc_string: str, frame_rate: float = 24.0) -> bool:

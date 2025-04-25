@@ -143,11 +143,11 @@ class EmbeddedAudio(EmbeddedMedia):
     def duration(self) -> float:
         """ The audio file duration in seconds.
         """
-        self._getProxyInformation()
-        return self._audioProxy.duration
+        self._get_proxy_information()
+        return self._audio_proxy.duration
 
     @property
-    def conformedDuration(self) -> _timeCode.TimeCode:
+    def conformed_duration(self) -> _timeCode.TimeCode:
         """ The audio file conformed duration as timecode (24fps).
         """
         self._get_proxy_information()

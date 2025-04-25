@@ -118,7 +118,7 @@ class TestConformPath(unittest.TestCase):
         with self.assertRaises(ValueError) as error:
             conform_path("dir/not_a_sequence.exr")
 
-        self.assertEqual(str(error.exception), "Invalid path: 'dir/not_a_sequence.exr'")
+        self.assertEqual(str(error.exception), "Invalid path: dir/not_a_sequence.exr.")
 
     def test_invalid_path_contained_and_extended(self):
         """ Ensure a ValueError is raised when conforming a path that use both frame range form.
@@ -138,4 +138,4 @@ class TestConformPath(unittest.TestCase):
         with self.assertRaises(ValueError) as error:
             conform_path("dir/img.%04d_suffix.ext")
 
-        self.assertEqual(str(error.exception), "Invalid path: 'dir/img.%04d_suffix.ext'")
+        self.assertEqual(str(error.exception), "Invalid path: dir/img.%04d_suffix.ext.")

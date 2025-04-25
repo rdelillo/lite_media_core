@@ -113,7 +113,7 @@ class MediaInfoAPI(_base.AbstractRegexIdentifier):
 
         # Make sure we got some data
         if not info and metadata:
-            raise _base.MediaInfoException(f"Unsupported file: {input_path}.") from error
+            raise _base.MediaInfoException(f"Unsupported file: {input_path}.")
 
         # Convert milliseconds to seconds
         if "seconds" in info:

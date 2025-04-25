@@ -31,7 +31,7 @@ def format_sequence(sequence: object, predefined_format: PredefinedFormat) -> st
     :raises ValueError: If the provided pyseq is incompatible with the format.
     """
     # Do not allow a sequence without any frame range to be formated to an extended format.
-    if not sequence.has_frame_range and predefinedFormat in _EXTENDED_FORMATS:
+    if not sequence.has_frame_range and predefined_format in _EXTENDED_FORMATS:
         raise ValueError(f"Cannot format sequence without a frame range to {predefined_format}.")
 
     # Resolve template to use

@@ -101,160 +101,160 @@ class TestFrameRange(unittest.TestCase):
         self.assertEqual(str(sequence.FrameRange(1, 1001, step=50)), "1-1001x50")
         self.assertEqual(str(sequence.FrameRange(1, 14, missing=[5, 6, 7, 11])), "1-4, 8-10, 12-14")
 
-    def test_fromString(self):
+    def test_from_string(self):
         """ Ensure a FrameRange can be created from a frame list string representation.
         """
         frameRange = sequence.FrameRange(1, 10, missing=[3, 4, 6, 7])
-        self.assertEqual(sequence.FrameRange.fromString("1-2, 5, 8-10"), frameRange)
+        self.assertEqual(sequence.FrameRange.from_string("1-2, 5, 8-10"), frameRange)
 
-    def test_fromString_negative_left(self):
+    def test_from_string_negative_left(self):
         """ Ensure a FrameRange can be created from a frame list string representation with negative numbers.
         """
         frameRange = sequence.FrameRange(-10, 6)
-        self.assertEqual(sequence.FrameRange.fromString("-10-6"), frameRange)
+        self.assertEqual(sequence.FrameRange.from_string("-10-6"), frameRange)
 
-    def test_fromString_negative_left_and_right(self):
+    def test_from_string_negative_left_and_right(self):
         """ Ensure a FrameRange can be created from a frame list string representation with negative numbers.
         """
         frameRange = sequence.FrameRange(-10, -4, missing=[-5])
-        self.assertEqual(sequence.FrameRange.fromString("-10--6, -4"), frameRange)
+        self.assertEqual(sequence.FrameRange.from_string("-10--6, -4"), frameRange)
 
-    def test_fromString_step(self):
+    def test_from_string_step(self):
         """ Ensure a FrameRange can be created with a step from a frame list string representation.
         """
         frameRange = sequence.FrameRange(start=1, end=21, step=5)
-        self.assertEqual(sequence.FrameRange.fromString("1-21x5"), frameRange)
+        self.assertEqual(sequence.FrameRange.from_string("1-21x5"), frameRange)
 
-    def test_fromString_multipleStepRaise(self):
-        """ Ensure FrameRange.fromString() raise if a string provides multiple steps.
+    def test_from_string_multipleStepRaise(self):
+        """ Ensure FrameRange.from_string() raise if a string provides multiple steps.
         """
         with self.assertRaises(ValueError):
-            sequence.FrameRange.fromString("1-21x5, 50-100x10")
+            sequence.FrameRange.from_string("1-21x5, 50-100x10")
 
-    def test_fromStringConsistency(self):
+    def test_from_stringConsistency(self):
         """ Ensure a FrameRange can be created from various frame range representations.
         """
         self.assertEqual(
-            sequence.FrameRange.fromString("1-100"), sequence.FrameRange(start=1, end=100),
+            sequence.FrameRange.from_string("1-100"), sequence.FrameRange(start=1, end=100),
         )
-        self.assertEqual(sequence.FrameRange.fromString("1"), sequence.FrameRange(start=1, end=1))
+        self.assertEqual(sequence.FrameRange.from_string("1"), sequence.FrameRange(start=1, end=1))
         self.assertEqual(
-            sequence.FrameRange.fromString("1 50 51"),
+            sequence.FrameRange.from_string("1 50 51"),
             # pylint: disable=range-builtin-not-iterating
             sequence.FrameRange(start=1, end=51, missing=range(2, 50)),
         )
 
         missing = itertools.chain(range(2, 17), range(18, 51), range(52, 100))
         self.assertEqual(
-            sequence.FrameRange.fromString("1, 51, 100-120, 17"),
+            sequence.FrameRange.from_string("1, 51, 100-120, 17"),
             sequence.FrameRange(start=1, end=120, missing=missing),
         )
 
-    def test_fromString_stepConsistency(self):
+    def test_from_string_stepConsistency(self):
         """ Ensure a FrameRange can be created with steps from various frame range representations.
         """
         self.assertEqual(
-            sequence.FrameRange.fromString("1-91x15"), sequence.FrameRange(start=1, end=91, step=15),
+            sequence.FrameRange.from_string("1-91x15"), sequence.FrameRange(start=1, end=91, step=15),
         )
         self.assertEqual(
-            sequence.FrameRange.fromString("30-50x10, 70"),
+            sequence.FrameRange.from_string("30-50x10, 70"),
             sequence.FrameRange(start=30, end=70, step=10, missing=[60]),
         )
         self.assertEqual(
-            sequence.FrameRange.fromString("1-4x1 8-10x1 12-14x1"),
+            sequence.FrameRange.from_string("1-4x1 8-10x1 12-14x1"),
             sequence.FrameRange(start=1, end=14, step=1, missing=[5, 6, 7, 11]),
         )
         self.assertEqual(
-            sequence.FrameRange.fromString("1-101x50, 201"),
+            sequence.FrameRange.from_string("1-101x50, 201"),
             sequence.FrameRange(start=1, end=201, step=50, missing=[151]),
         )
 
-    def test_fromString_invalid(self):
-        """ Ensure invalid inputs will raise a ValueError in fromString().
+    def test_from_string_invalid(self):
+        """ Ensure invalid inputs will raise a ValueError in from_string().
         """
         with self.assertRaises(ValueError):
-            sequence.FrameRange.fromString("")
+            sequence.FrameRange.from_string("")
 
         with self.assertRaises(ValueError):
-            sequence.FrameRange.fromString("an invalid input")
+            sequence.FrameRange.from_string("an invalid input")
 
         with self.assertRaises(ValueError):
-            sequence.FrameRange.fromString("x1,4-8,10")  # Does not start with an int
+            sequence.FrameRange.from_string("x1,4-8,10")  # Does not start with an int
 
-    def test_fromData_single_number(self):
+    def test_from_data_single_number(self):
         """ Ensure a FrameRange can be created from a single frame.
         """
-        self.assertEqual(sequence.FrameRange.fromData(1), sequence.FrameRange(start=1, end=1))
+        self.assertEqual(sequence.FrameRange.from_data(1), sequence.FrameRange(start=1, end=1))
 
-    def test_fromData_multiple_numbers(self):
+    def test_from_data_multiple_numbers(self):
         """ Ensure a FrameRange can be created from multiple frames.
         """
         self.assertEqual(
-            sequence.FrameRange.fromData(1, 2, 4), sequence.FrameRange(start=1, end=4, missing=[3]),
+            sequence.FrameRange.from_data(1, 2, 4), sequence.FrameRange(start=1, end=4, missing=[3]),
         )
 
-    def test_fromData_sequence(self):
+    def test_from_data_sequence(self):
         """ Ensure a FrameRange can be created from a sequence of frames.
         """
         self.assertEqual(
-            sequence.FrameRange.fromData([1, 2, 4]), sequence.FrameRange(start=1, end=4, missing=[3]),
+            sequence.FrameRange.from_data([1, 2, 4]), sequence.FrameRange(start=1, end=4, missing=[3]),
         )
 
-    def test_fromData_string(self):
+    def test_from_data_string(self):
         """ Ensure a FrameRange can be created from a string representation.
         """
-        self.assertEqual(sequence.FrameRange.fromData("1-100"), sequence.FrameRange(start=1, end=100))
+        self.assertEqual(sequence.FrameRange.from_data("1-100"), sequence.FrameRange(start=1, end=100))
 
-    def test_fromData_frameRange(self):
+    def test_from_data_frameRange(self):
         """ Ensure a FrameRange can be created from another FrameRange.
         """
         self.assertEqual(
-            sequence.FrameRange.fromData(sequence.FrameRange(start=1, end=4, missing=[3])),
+            sequence.FrameRange.from_data(sequence.FrameRange(start=1, end=4, missing=[3])),
             sequence.FrameRange(start=1, end=4, missing=[3]),
         )
 
-    def test_fromData_frameSet(self):
+    def test_from_data_frameSet(self):
         """ Ensure a FrameRange can be created from a fileseq FrameSet.
         """
         self.assertEqual(
-            sequence.FrameRange.fromData(fileseq.FrameSet({1, 2, 4})),
+            sequence.FrameRange.from_data(fileseq.FrameSet({1, 2, 4})),
             sequence.FrameRange(start=1, end=4, missing=[3]),
         )
 
-    def test_fromData_invalid(self):
+    def test_from_data_invalid(self):
         """ Ensure a FrameRange cannot be created from invalid data.
         """
         with self.assertRaises(ValueError):
-            sequence.FrameRange.fromData(1.2)
+            sequence.FrameRange.from_data(1.2)
 
         with self.assertRaises(ValueError):
-            sequence.FrameRange.fromData(None)
+            sequence.FrameRange.from_data(None)
 
         with self.assertRaises(ValueError):
-            sequence.FrameRange.fromData("")
+            sequence.FrameRange.from_data("")
 
-    def test_iterRanges_noMissing(self):
-        """ Ensure FrameRange.iterRanges returns parent range when no missing frames.
+    def test_iter_ranges_noMissing(self):
+        """ Ensure FrameRange.iter_ranges returns parent range when no missing frames.
         """
         frameRange = sequence.FrameRange(10, 20)
-        subRanges = list(frameRange.iterRanges())
+        subRanges = list(frameRange.iter_ranges())
 
         self.assertEqual([frameRange], subRanges)
 
-    def test_iterRanges_missing(self):
-        """ Ensure FrameRange.iterRanges returns relevant sub-ranges.
+    def test_iter_ranges_missing(self):
+        """ Ensure FrameRange.iter_ranges returns relevant sub-ranges.
         """
         frameRange = sequence.FrameRange(10, 30, missing=[15, 16, 24, 25])
-        subRanges = list(frameRange.iterRanges())
+        subRanges = list(frameRange.iter_ranges())
         expected = [sequence.FrameRange(10, 14), sequence.FrameRange(17, 23), sequence.FrameRange(26, 30)]
 
         self.assertEqual(expected, subRanges)
 
-    def test_iterRanges_step(self):
-        """ Ensure FrameRange.iterRanges returns relevant sub-ranges with step.
+    def test_iter_ranges_step(self):
+        """ Ensure FrameRange.iter_ranges returns relevant sub-ranges with step.
         """
         frameRange = sequence.FrameRange(10, 30, step=2, missing=[14, 24, 26])
-        subRanges = list(frameRange.iterRanges())
+        subRanges = list(frameRange.iter_ranges())
         expected = [
             sequence.FrameRange(10, 12, step=2),
             sequence.FrameRange(16, 22, step=2),
@@ -263,11 +263,11 @@ class TestFrameRange(unittest.TestCase):
 
         self.assertEqual(expected, subRanges)
 
-    def test_iterRanges_padding(self):
-        """ Ensure FrameRange.iterRanges returns relevant sub-ranges with padding.
+    def test_iter_ranges_padding(self):
+        """ Ensure FrameRange.iter_ranges returns relevant sub-ranges with padding.
         """
         frameRange = sequence.FrameRange(10, 20, padding=4, missing=[15, 16])
-        subRanges = list(frameRange.iterRanges())
+        subRanges = list(frameRange.iter_ranges())
         expected = [sequence.FrameRange(10, 14, padding=4), sequence.FrameRange(17, 20, padding=4)]
 
         self.assertEqual(expected, subRanges)

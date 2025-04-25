@@ -13,81 +13,81 @@ class TestTimeCode(unittest.TestCase):
         """ Set up testing class.
         """
         super(TestTimeCode, self).setUp()
-        self.frameRate = rate.FrameRate(24.0)
+        self.frame_rate = rate.FrameRate(24.0)
 
     def test_timecode_fromStr(self):
         """ Ensure a valid timecode can be created from a timecode string.
         """
-        tc = timeCode.TimeCode("01:00:00:00", self.frameRate)
+        tc = timeCode.TimeCode("01:00:00:00", self.frame_rate)
 
         self.assertEqual(
-            ("01:00:00:00", 86400, self.frameRate),
-            (str(tc), tc.frames, tc.frameRate),
+            ("01:00:00:00", 86400, self.frame_rate),
+            (str(tc), tc.frames, tc.frame_rate),
         )
 
     def test_timecode_fromInt(self):
         """ Ensure a valid timecode can be created from an amount of frames.
         """
-        tc = timeCode.TimeCode(86400, self.frameRate)
+        tc = timeCode.TimeCode(86400, self.frame_rate)
 
         self.assertEqual(
-            ("01:00:00:00", 86400, self.frameRate),
-            (str(tc), tc.frames, tc.frameRate),
+            ("01:00:00:00", 86400, self.frame_rate),
+            (str(tc), tc.frames, tc.frame_rate),
         )
 
     def test_timecode_fromMilliSecondsStr(self):
         """ Ensure a timecode can be created from a 'HH:MM:SS.MSMS' formatted string.
         """
-        tc = timeCode.TimeCode("00:00:00.08", self.frameRate)
+        tc = timeCode.TimeCode("00:00:00.08", self.frame_rate)
 
         self.assertEqual(
-            ("00:00:00:02", 2, self.frameRate),
-            (str(tc), tc.frames, tc.frameRate),
+            ("00:00:00:02", 2, self.frame_rate),
+            (str(tc), tc.frames, tc.frame_rate),
         )
 
-    def test_timecode_fromSeconds(self):
+    def test_timecode_from_seconds(self):
         """ Ensure a valid timecode can be created from an amount of seconds.
         """
-        tc = timeCode.TimeCode.fromSeconds(3600.0, self.frameRate)
+        tc = timeCode.TimeCode.from_seconds(3600.0, self.frame_rate)
         self.assertEqual("01:00:00:00", str(tc))  # 3600 seconds = 1 hour
 
-    def test_timecode_fromSeconds_floatFrameRate(self):
+    def test_timecode_from_seconds_floatframe_rate(self):
         """ Ensure a valid timecode can be created from an amount of seconds and a float as frame rate.
         """
-        tc = timeCode.TimeCode.fromSeconds(3600.0, 24.0)
+        tc = timeCode.TimeCode.from_seconds(3600.0, 24.0)
         self.assertEqual(
-            ("01:00:00:00", self.frameRate),
-            (str(tc), tc.frameRate),
+            ("01:00:00:00", self.frame_rate),
+            (str(tc), tc.frame_rate),
         )
 
     def test_timecode_fromFloatSeconds(self):
         """ Ensure a valid timecode can be created from an floating amount of seconds.
         """
-        tc = timeCode.TimeCode.fromSeconds(3600.12, self.frameRate)
+        tc = timeCode.TimeCode.from_seconds(3600.12, self.frame_rate)
         self.assertEqual("01:00:00:03", str(tc))  # 0.12 seconds = 3 frames (2.88)
 
     def test_timecode_representation(self):
         """ Ensure a valid timecode can be represented.
         """
-        tc = timeCode.TimeCode("01:02:03:04", self.frameRate)
+        tc = timeCode.TimeCode("01:02:03:04", self.frame_rate)
         self.assertEqual("<TimeCode '01:02:03:04' rate='24.0 fps'>", repr(tc))
 
     def test_timecode_asInt(self):
         """ Ensure a valid timecode object can be represented as an int (number of frames).
         """
-        tc = timeCode.TimeCode(50, self.frameRate)
+        tc = timeCode.TimeCode(50, self.frame_rate)
         self.assertEqual(50, int(tc))
 
     def test_timecode_asStr(self):
         """ Ensure a valid timecode object can be represented as a str (timecode).
         """
-        tc = timeCode.TimeCode("00:12:34:12", self.frameRate)
+        tc = timeCode.TimeCode("00:12:34:12", self.frame_rate)
         self.assertEqual("00:12:34:12", str(tc))
 
     def test_timecode_asSecond(self):
         """ Ensure a valid timecode can be represented as an amount of seconds.
         """
-        tc = timeCode.TimeCode("00:01:00:00", self.frameRate)
+        tc = timeCode.TimeCode("00:01:00:00", self.frame_rate)
         self.assertEqual(60.0, tc.seconds)  # 1min = 60 seconds
 
     def test_timecode_fails_wrongValue(self):
@@ -97,7 +97,7 @@ class TestTimeCode(unittest.TestCase):
             timeCode.TimecodeException,
             timeCode.TimeCode,
             66.6,  # wrong timecode value (not tc, not amount of frames)
-            self.frameRate,
+            self.frame_rate,
         )
 
     def test_timecode_fails_wronglyFormattedValue(self):
@@ -107,7 +107,7 @@ class TestTimeCode(unittest.TestCase):
             timeCode.TimecodeException,
             timeCode.TimeCode,
             "wrongTimecodeValue",  # str input but not a timecode format
-            self.frameRate,
+            self.frame_rate,
         )
 
     def test_timecode_fails_wrongRate(self):
@@ -117,7 +117,7 @@ class TestTimeCode(unittest.TestCase):
             timeCode.TimecodeException,
             timeCode.TimeCode,
             "01:00:00:00",
-            "wrongFrameRate",  # wrong frame rate value
+            "wrongframe_rate",  # wrong frame rate value
         )
 
 
@@ -195,7 +195,7 @@ class TestTimecodeOperations(unittest.TestCase):
 
         self.assertEqual(
             ("01:01:00:00", 24.0),
-            (str(result), float(result.frameRate)),
+            (str(result), float(result.frame_rate)),
         )
 
 
@@ -203,12 +203,12 @@ class TestTimecodeUtils(unittest.TestCase):
     """ Test timecode utility features.
     """
 
-    def test_isValidTimecodeStr_True(self):
+    def test_is_valid_timecode_str_True(self):
         """ Ensure a valid timecode string can be validated.
         """
-        self.assertTrue(timeCode.isValidTimecodeStr("00:04:00:00", frameRate=24))
+        self.assertTrue(timeCode.is_valid_timecode_str("00:04:00:00", frame_rate=24))
 
-    def test_isValidTimecodeStr_False(self):
+    def test_is_valid_timecode_str_False(self):
         """ Ensure an invalid timecode string is correctly detected.
         """
-        self.assertEqual(False, timeCode.isValidTimecodeStr("wrongTc", frameRate=24))
+        self.assertEqual(False, timeCode.is_valid_timecode_str("wrongTc", frame_rate=24))

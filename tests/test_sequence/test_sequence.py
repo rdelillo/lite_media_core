@@ -21,7 +21,7 @@ class TestSequenceAbsolute(unittest.TestCase):
         self._sequence_dirname = os.path.abspath(os.path.join(os.sep, "path", "to", "a"))
         self._sequence_basename = os.path.join(self._sequence_dirname, "file.")
         sequence_string = self._sequence_basename + "%04d.ext" + " " + "1001-1005"
-        self._sequence = sequence.Sequence.fromString(sequence_string)
+        self._sequence = sequence.Sequence.from_string(sequence_string)
 
     def test_properties(self):
         """ Ensure the Sequence properties are valid.
@@ -49,33 +49,33 @@ class TestSequenceAbsolute(unittest.TestCase):
         """ Ensure a Sequence can be build from a padded file string.
         """
         first_frame = self._sequence_basename + "1001.ext"
-        seq = sequence.Sequence.fromString(first_frame)
+        seq = sequence.Sequence.from_string(first_frame)
         self.assertTrue(first_frame== seq.start == seq.end)
 
     def test_paddedUniqueFile_r3d(self):
         """ Ensure a Sequence can be build from a padded file string.
         """
         unique_file = os.path.abspath(os.path.join("path", "to", "a", "file.") + "1001.cr2")
-        seq = sequence.Sequence.fromString(unique_file)
+        seq = sequence.Sequence.from_string(unique_file)
         self.assertTrue(unique_file == seq.start == seq.end)
 
     def test_unpaddedUniqueFile(self):
         """ Ensure a Sequence cannot be build from an unpadded file string.
         """
         with self.assertRaises(ValueError):
-            _ = sequence.Sequence.fromString("/path/to/an/unpadded/file.ext")
+            _ = sequence.Sequence.from_string("/path/to/an/unpadded/file.ext")
 
         with self.assertRaises(ValueError):
-            _ = sequence.Sequence.fromString("/path/to/an/unpadded/file.ext2")
+            _ = sequence.Sequence.from_string("/path/to/an/unpadded/file.ext2")
 
         with self.assertRaises(ValueError):
-            _ = sequence.Sequence.fromString("/path/to/an/unpadded/file.R3D")
+            _ = sequence.Sequence.from_string("/path/to/an/unpadded/file.R3D")
 
     def test_representation(self):
         """ Ensure a Sequence represents correctly.
         """
         self.assertEqual(
-            "<Sequence <FileSequence: '"+ self._sequence_basename + "1001-1005#.ext'>>",
+            "<Sequence "+ self._sequence_basename + "1001-1005#.ext>",
             repr(self._sequence),
         )
 
@@ -105,16 +105,16 @@ class TestSequenceAbsolute(unittest.TestCase):
         """ Ensure we can compare two similar sequences.
         """
         self.assertEqual(
-            sequence.Sequence.fromString("/path/to/a/file.%04d.ext 1001-1005"),
-            sequence.Sequence.fromString("/path/to/a/file.%04d.ext 1001-1005"),
+            sequence.Sequence.from_string("/path/to/a/file.%04d.ext 1001-1005"),
+            sequence.Sequence.from_string("/path/to/a/file.%04d.ext 1001-1005"),
         )
 
     def test_not_equals(self):
         """ Ensure we can compare two different sequences.
         """
         self.assertNotEqual(
-            sequence.Sequence.fromString("/path/to/a/file.%04d.ext 1001-1005"),
-            sequence.Sequence.fromString("/path/to/a/file.%04d.ext 1001-1004"),
+            sequence.Sequence.from_string("/path/to/a/file.%04d.ext 1001-1005"),
+            sequence.Sequence.from_string("/path/to/a/file.%04d.ext 1001-1004"),
         )
 
     def test_hash(self):
@@ -122,23 +122,23 @@ class TestSequenceAbsolute(unittest.TestCase):
         """
         self.assertEqual(
             {
-                sequence.Sequence.fromString("/path/to/a/file.%04d.ext 1001-1005"),
-                sequence.Sequence.fromString("/path/to/a/file.%04d.ext 1001-1005"),
-                sequence.Sequence.fromString("/path/to/a/file.%04d.ext 1001-1004"),
+                sequence.Sequence.from_string("/path/to/a/file.%04d.ext 1001-1005"),
+                sequence.Sequence.from_string("/path/to/a/file.%04d.ext 1001-1005"),
+                sequence.Sequence.from_string("/path/to/a/file.%04d.ext 1001-1004"),
             },
             {
-                sequence.Sequence.fromString("/path/to/a/file.%04d.ext 1001-1005"),
-                sequence.Sequence.fromString("/path/to/a/file.%04d.ext 1001-1004"),
+                sequence.Sequence.from_string("/path/to/a/file.%04d.ext 1001-1005"),
+                sequence.Sequence.from_string("/path/to/a/file.%04d.ext 1001-1004"),
             },
         )
 
-    def test_frameRange(self):
-        """ Ensure a FrameRange can be retrieved from a Sequence.
+    def test_frame_range(self):
+        """ Ensure a frame_range can be retrieved from a Sequence.
         """
-        frameRange = self._sequence.frameRange
+        frame_range = self._sequence.frame_range
 
         self.assertEqual(
-            (1001, 1005, 4, []), (frameRange.start, frameRange.end, frameRange.padding, frameRange.missing,),
+            (1001, 1005, 4, []), (frame_range.start, frame_range.end, frame_range.padding, frame_range.missing,),
         )
 
     def test_getPathFromFrameNumber(self):
@@ -150,38 +150,38 @@ class TestSequenceAbsolute(unittest.TestCase):
                 self._sequence_basename + "1003.ext",
                 self._sequence_basename + "1005.ext",),
             (
-                self._sequence.getFramePath(1001),
-                self._sequence.getFramePath(1003),
-                self._sequence.getFramePath(1005),
+                self._sequence.get_frame_path(1001),
+                self._sequence.get_frame_path(1003),
+                self._sequence.get_frame_path(1005),
             ),
         )
 
     def test_getPathFromFrameNumber_missingFrame(self):
         """ Ensure a path to a missing frame cannot be retrieved (can be updated later on).
         """
-        missingFrameSequence = sequence.Sequence.fromString(
+        missingFrameSequence = sequence.Sequence.from_string(
             "/path/to/a/file.%04d.ext 1-5 [3,4]",  # explicitly provide missing frames
         )
 
         with self.assertRaises(ValueError):
-            _ = missingFrameSequence.getFramePath(3)
+            _ = missingFrameSequence.get_frame_path(3)
 
     def test_getPathFromFrameNumber_invalidFrame(self):
         """ Ensure an invalid frame path cannot be retrieve from a Sequence.
         """
         with self.assertRaises(ValueError):
-            _ = self._sequence.getFramePath("not_a_frame_number")
+            _ = self._sequence.get_frame_path("not_a_frame_number")
 
     def test_getPathFromFrameNumber_wrongFrame(self):
         """ Ensure a wrong frame path cannot be retrieve from a Sequence.
         """
         with self.assertRaises(ValueError):
-            _ = self._sequence.getFramePath(8)
+            _ = self._sequence.get_frame_path(8)
 
     def test_missingFrames(self):
         """ Ensure missing frames can be retrieved from a Sequence.
         """
-        missingFrameSequence = sequence.Sequence.fromString(
+        missingFrameSequence = sequence.Sequence.from_string(
            self._sequence_basename + "%04d.ext 1-5 [3,4]",  # explicitly provide missing frames
         )
 
@@ -210,7 +210,7 @@ class TestSequenceNonZeroPadded(unittest.TestCase):
         """
         super(TestSequenceNonZeroPadded, self).setUp()
         self._sequence_str = os.path.abspath(os.path.join(os.sep, "path", "to", "a", "file"))
-        self._sequence = sequence.Sequence.fromString(self._sequence_str + ".%d.ext 7-11")
+        self._sequence = sequence.Sequence.from_string(self._sequence_str + ".%d.ext 7-11")
 
     def test_iter(self):
         """ Ensure sequence can be iterated over.
@@ -236,7 +236,7 @@ class TestSequenceRelative(unittest.TestCase):
         """ Set up the testing class.
         """
         super(TestSequenceRelative, self).setUp()
-        self._sequence = sequence.Sequence.fromString("file.%04d.ext 1001-1005")
+        self._sequence = sequence.Sequence.from_string("file.%04d.ext 1001-1005")
 
     def test_properties(self):
         """ Ensure the Sequence properties are valid.
@@ -264,7 +264,7 @@ class TestSequenceRelative(unittest.TestCase):
         """ Ensure a Sequence represents correctly.
         """
         self.assertEqual(
-            "<Sequence <FileSequence: 'file.1001-1005#.ext'>>", repr(self._sequence),
+            "<Sequence file.1001-1005#.ext>", repr(self._sequence),
         )
 
     def test_representationAsString(self):
@@ -297,7 +297,7 @@ class TestSequenceSingleFrame(unittest.TestCase):
         """ Set up the testing class.
         """
         super(TestSequenceSingleFrame, self).setUp()
-        self._sequence = sequence.Sequence.fromString("file.%04d.ext 1005-1005")
+        self._sequence = sequence.Sequence.from_string("file.%04d.ext 1005-1005")
 
     def test_properties(self):
         """ Ensure the Sequence properties are valid.
@@ -324,7 +324,7 @@ class TestSequenceSingleFrame(unittest.TestCase):
     def test_headWithMultipleDigits(self):
         """ Ensure we can correctly retrieve the head for a single frame sequence with multiple digits.
         """
-        result = sequence.Sequence.fromList(["file_1000_suffix.1001.ext"])
+        result = sequence.Sequence.from_list(["file_1000_suffix.1001.ext"])
 
         self.assertEqual(
             (
@@ -342,7 +342,7 @@ class TestSequenceSingleFrame(unittest.TestCase):
         """ Ensure a Sequence represents correctly.
         """
         self.assertEqual(
-            "<Sequence <FileSequence: 'file.1005#.ext'>>", repr(self._sequence),
+            "<Sequence file.1005#.ext>", repr(self._sequence),
         )
 
     def test_representationAsString(self):
@@ -350,12 +350,15 @@ class TestSequenceSingleFrame(unittest.TestCase):
         """
         self.assertEqual("<Sequence '%s'>" % os.path.join(os.getcwd(), "file.1005.ext"), str(self._sequence))
 
-    def test_frameRange(self):
+    def test_frame_range(self):
         """ Ensure the frame range from the sequence is correct.
         """
-        frameRange = self._sequence.frameRange
+        frame_range = self._sequence.frame_range
 
-        self.assertEqual(sequence.FrameRange(1005, 1005, padding=4), frameRange)
+        self.assertEqual(
+            sequence.FrameRange(1005, 1005, padding=4),
+            frame_range
+        )
 
     def test_iter(self):
         """ Ensure the Sequence can be iterated over.
@@ -388,7 +391,7 @@ class TestSequenceInit(unittest.TestCase):
         seq = sequence.Sequence(fileseq.FileSequence(seq_path))
         self.assertEqual(
             ("prefix.", ".ext", 4, 1, 10, True, [],),
-            (seq.head, seq.tail, seq.padding, seq.frameRange.start, seq.frameRange.end, seq.hasLeadingZeros, seq.missing),
+            (seq.head, seq.tail, seq.padding, seq.frame_range.start, seq.frame_range.end, seq.has_leading_zeros, seq.missing),
         )
 
     def test__init__invalid_sequence(self):
@@ -404,45 +407,45 @@ class TestSequenceInit(unittest.TestCase):
         with self.assertRaises(ValueError) as error:
             sequence.Sequence(fileseq.FileSequence("/a/single/file"))
 
-    def test_fromString_fails(self):
+    def test_from_string_fails(self):
         """ Ensure a Sequence object cannot be initialized from an invalid string.
         """
         with self.assertRaises(ValueError) as error:
-            _ = sequence.Sequence.fromString("not_a_string_sequence")
-        self.assertEqual("Invalid path: 'not_a_string_sequence'", str(error.exception))
+            _ = sequence.Sequence.from_string("not_a_string_sequence")
+        self.assertEqual("Invalid path: not_a_string_sequence.", str(error.exception))
 
-    def test_fromString_no_prefix(self):
+    def test_from_string_no_prefix(self):
         """ Ensure a Sequence object can be initialized from a string with no directory or prefix.
         """
-        seq = sequence.Sequence.fromString("%04d.exr 1-10")
+        seq = sequence.Sequence.from_string("%04d.exr 1-10")
         self.assertEqual(("", ".exr"), (seq.head, seq.tail))
 
-    def test_fromString_directory_no_prefix(self):
+    def test_from_string_directory_no_prefix(self):
         """ Ensure a Sequence object can be initialized from a string with a directory and no prefix.
         """
-        seq = sequence.Sequence.fromString("/dir/%04d.exr 1-10")
+        seq = sequence.Sequence.from_string("/dir/%04d.exr 1-10")
         self.assertEqual(("", ".exr"), (seq.head, seq.tail))
 
-    def test_fromString_no_frame_range(self):
-        """ Ensure a Sequence object cannot be initialized from a path without any framerange.
+    def test_from_string_no_frame_range(self):
+        """ Ensure a Sequence object cannot be initialized from a path without any frame_range.
         """
         with self.assertRaises(ValueError) as error:
-            sequence.Sequence.fromString("dir/img.####.exr")
+            sequence.Sequence.from_string("dir/img.####.exr")
 
         self.assertEqual(
-            str(error.exception), "Path have no frame range information: 'dir/img.####.exr'",
+            str(error.exception), "Path have no frame range information: dir/img.####.exr.",
         )
 
-    def test_fromString_no_frame_range_allowEmpty(self):
+    def test_from_string_no_frame_range_allow_empty(self):
         """ Ensure a Sequence object can be initialized from a path without any frame range when
-        the `allowEmpty` flag is used.
+        the `allow_empty` flag is used.
         """
-        self.assertTrue(sequence.Sequence.fromString("dir/img.####.exr", allowEmpty=True))
+        self.assertTrue(sequence.Sequence.from_string("dir/img.####.exr", allow_empty=True))
 
-    def test_fromList(self):
+    def test_from_list(self):
         """ Ensure a Sequence object can be initialized from a list of path.
         """
-        listSequence = sequence.Sequence.fromList(
+        listSequence = sequence.Sequence.from_list(
             [
                 "/path/to/a/file_v01.ext",
                 "/path/to/a/file_v02.ext",
@@ -453,35 +456,35 @@ class TestSequenceInit(unittest.TestCase):
 
         self.assertEqual(3, len(listSequence))
 
-    def test_fromList_singleEntry(self):
+    def test_from_list_single_entry(self):
         """ Ensure a list of Sequence object can be initialized from a list of path when the
-        singleEntry kwarg is set to False.
+        single_entry kwarg is set to False.
         """
-        listSequence = sequence.Sequence.fromList(
+        listSequence = sequence.Sequence.from_list(
             [
                 "/path/to/a/file_v01.ext",
                 "/path/to/a/file_v02.ext",
                 "/path/to/a/file_v03.ext",
                 "/path/to/another/file_v01.ext",
             ],
-            singleEntry=False,
+            single_entry=False,
         )
 
         self.assertEqual(len(listSequence), 2)
 
-    def test_fromList_preserveList(self):
-        """ Ensure the fromList function doesn't edit the input list.
+    def test_from_list_preserveList(self):
+        """ Ensure the from_list function doesn't edit the input list.
         """
         files = ["/path/to/a/file_v01.ext"]
-        _ = sequence.Sequence.fromList(files)
+        _ = sequence.Sequence.from_list(files)
 
         self.assertListEqual(files, ["/path/to/a/file_v01.ext"])
 
-    def test_fromListError(self):
+    def test_from_listError(self):
         """ Ensure a ValueError is raised if no Sequence object can be initialized from a list of paths.
         """
         with self.assertRaises(ValueError):
-            sequence.Sequence.fromList(
+            sequence.Sequence.from_list(
                 [
                     "/path/to/a/a_single_file.ext",
                     "/path/to/a/another_single_file.ext",
@@ -489,23 +492,23 @@ class TestSequenceInit(unittest.TestCase):
                 ]
             )
 
-    def test_fromList_sorted(self):
+    def test_from_list_sorted(self):
         """ Ensure a Sequence object can be initialized from a random list of path, by sorting it.
         """
-        listSequence = sequence.Sequence.fromList(
+        listSequence = sequence.Sequence.from_list(
             ["/path/to/a/file.1001.ext", "/path/to/a/file.1002.ext", "/path/to/a/file.1.ext",]
         )
 
-        self.assertEqual([1, 1001, 1002], list(listSequence.frameRange))
+        self.assertEqual([1, 1001, 1002], list(listSequence.frame_range))
 
-    def test_fromList_ambiguous_leading_zero(self):
+    def test_from_list_ambiguous_leading_zero(self):
         """ Ensure that we don't assume padding in case of ambiguity.
         """
-        listSequence = sequence.Sequence.fromList(["/path/to/a/file.1001.exr", "/path/to/a/file.1003.exr",])
-        self.assertEqual(False, listSequence.hasLeadingZeros)
+        listSequence = sequence.Sequence.from_list(["/path/to/a/file.1001.exr", "/path/to/a/file.1003.exr",])
+        self.assertEqual(False, listSequence.has_leading_zeros)
 
-    def test_fromList_strRepresentation(self):
-        """ Ensure that we cannot resolve a sequence from it's string representation using fromList.
+    def test_from_list_strRepresentation(self):
+        """ Ensure that we cannot resolve a sequence from it's string representation using from_list.
         """
         for listData in (
             ["/path/to/sequence.%04d.exr 1-10"],
@@ -517,30 +520,30 @@ class TestSequenceInit(unittest.TestCase):
             ["/path/to/sequence.0001-0010.exr"],
         ):
             with self.assertRaises(ValueError):
-                _ = sequence.Sequence.fromList(listData)
+                _ = sequence.Sequence.from_list(listData)
 
-    def test_fromList_no_leading_zero(self):
+    def test_from_list_no_leading_zero(self):
         """ Ensure a Sequence without leading zeros can be built from a list without leading zeros.
         """
-        listSequence = sequence.Sequence.fromList(["/path/to/a/file.9.exr", "/path/to/a/file.11.exr",])
-        self.assertEqual(False, listSequence.hasLeadingZeros)
+        listSequence = sequence.Sequence.from_list(["/path/to/a/file.9.exr", "/path/to/a/file.11.exr",])
+        self.assertEqual(False, listSequence.has_leading_zeros)
 
-    def test_fromList_leading_zero(self):
+    def test_from_list_leading_zero(self):
         """ Ensure a Sequence with leading zeros canb e built from a list with leading zeros.
         """
-        listSequence = sequence.Sequence.fromList(["/path/to/a/file.09.exr", "/path/to/a/file.11.exr",])
-        self.assertEqual(True, listSequence.hasLeadingZeros)
+        listSequence = sequence.Sequence.from_list(["/path/to/a/file.09.exr", "/path/to/a/file.11.exr",])
+        self.assertEqual(True, listSequence.has_leading_zeros)
 
-    def test_getSequences_fromPath(self):
+    def test_get_sequences_fromPath(self):
         """ Ensure a Sequence can be found on disk.
         """
         for index in range(1001, 1003):
             open(os.path.join(self.tempDirectory, "file.%06d.ext" % index), "a").close()  # touch file
 
-        foundSequence, = sequence.Sequence.getSequences(self.tempDirectory)
+        foundSequence, = sequence.Sequence.get_sequences(self.tempDirectory)
         self.assertEqual(2, len(foundSequence))
 
-    def test_getSequences_fromPath_missingFrames(self):
+    def test_get_sequences_fromPath_missingFrames(self):
         """ Ensure a Sequence with missing frames can be found on disk.
         """
         # sequence 1
@@ -555,7 +558,7 @@ class TestSequenceInit(unittest.TestCase):
         for index in range(25, 30):
             open(os.path.join(self.tempDirectory, "seq_%03d.ext" % index), "a").close()  # touch file
 
-        foundSequences = sequence.Sequence.getSequences(self.tempDirectory)
+        foundSequences = sequence.Sequence.get_sequences(self.tempDirectory)
         self.assertEqual(
             (
                 3,
@@ -565,27 +568,27 @@ class TestSequenceInit(unittest.TestCase):
             ),
             (
                 len(foundSequences),
-                list(foundSequences[0].frameRange),
-                list(foundSequences[1].frameRange),
-                list(foundSequences[2].frameRange),
+                list(foundSequences[0].frame_range),
+                list(foundSequences[1].frame_range),
+                list(foundSequences[2].frame_range),
             )
         )
 
-    def test_getSequences_fromPath_multiple(self):
+    def test_get_sequences_fromPath_multiple(self):
         """ Ensure multiple Sequences can be found on disk.
         """
         for index in range(1001, 1008, 3):
             open(os.path.join(self.tempDirectory, "file.%06d.ext" % index), "a").close()  # touch file
 
-        (foundSequence,) = sequence.Sequence.getSequences(self.tempDirectory)
+        (foundSequence,) = sequence.Sequence.get_sequences(self.tempDirectory)
         self.assertEqual(
             (
                 [1001, 1004, 1007],
                 [1002, 1003, 1005, 1006],
             ),
             (
-                list(foundSequence.frameRange),
-                foundSequence.frameRange.missing,
+                list(foundSequence.frame_range),
+                foundSequence.frame_range.missing,
             ),
         )
 
@@ -593,13 +596,13 @@ class TestSequenceInit(unittest.TestCase):
         """ Ensure no sequences are retrieved from an empty list.
         """
         self.assertEqual(
-            [], sequence.Sequence.getSequences([]),
+            [], sequence.Sequence.get_sequences([]),
         )
 
-    def test_getSequence_fromList(self):
+    def test_getSequence_from_list(self):
         """ Ensure multiple sequences can be retrieved from a list of path(s).
         """
-        sequences = sequence.Sequence.getSequences(
+        sequences = sequence.Sequence.get_sequences(
             [
                 "/path/to/a/sequence/file.1.ext",
                 "/path/to/a/sequence/file.2.ext",
@@ -612,8 +615,8 @@ class TestSequenceInit(unittest.TestCase):
 
         self.assertEqual(
             [
-                sequence.Sequence.fromString("/path/to/a/sequence/file.%d.ext 1-5 ([3, 4])"),
-                sequence.Sequence.fromString("/path/to/another/sequence/file_.%04d.ext 1001-1002"),
+                sequence.Sequence.from_string("/path/to/a/sequence/file.%d.ext 1-5 ([3, 4])"),
+                sequence.Sequence.from_string("/path/to/another/sequence/file_.%04d.ext 1001-1002"),
             ],
             sequences,
         )
@@ -629,18 +632,18 @@ class BaseSequenceTestCase(unittest.TestCase):
         :param str sequenceStr: A sequence string representation
         """
         # pylint: disable=no-member
-        self.assertEqual(self.sequence, sequence.Sequence.fromString(sequenceStr, allowEmpty=True))
+        self.assertEqual(self.sequence, sequence.Sequence.from_string(sequenceStr, allow_empty=True))
 
 
-class MutableSequenceWithoutFrameRangeTest(BaseSequenceTestCase):
+class MutableSequenceWithoutframe_rangeTest(BaseSequenceTestCase):
     """ Tests for a mutable padded sequence object that don't have a frame range.
     """
 
     def setUp(self):
         """ Set up the testing class.
         """
-        super(MutableSequenceWithoutFrameRangeTest, self).setUp()
-        self.sequence = sequence.Sequence.fromString("/path/to/a.%01d.exr", allowEmpty=True)
+        super(MutableSequenceWithoutframe_rangeTest, self).setUp()
+        self.sequence = sequence.Sequence.from_string("/path/to/a.%01d.exr", allow_empty=True)
 
     def test_valid_properties(self):
         """ Ensure we can access basic properties.
@@ -649,7 +652,7 @@ class MutableSequenceWithoutFrameRangeTest(BaseSequenceTestCase):
             (self.sequence.head, "a."),
             (self.sequence.tail, ".exr"),
             (self.sequence.padding, 1),
-            (self.sequence.hasLeadingZeros, False),
+            (self.sequence.has_leading_zeros, False),
             (self.sequence.missing, []),
         ):
             self.assertEqual(expected, actual)
@@ -657,7 +660,7 @@ class MutableSequenceWithoutFrameRangeTest(BaseSequenceTestCase):
     def test_invalid_properties(self):
         """ Ensure accessing incompatible properties raise an exception.
         """
-        for attr in ("start", "end", "frameRange"):
+        for attr in ("start", "end", "frame_range"):
             with self.assertRaises(sequence.NoFrameRangeError) as error:
                 getattr(self.sequence, attr)
             self.assertEqual("No frame range information available.", str(error.exception))
@@ -668,16 +671,16 @@ class MutableSequenceWithoutFrameRangeTest(BaseSequenceTestCase):
         self.assertEqual((), tuple(self.sequence))
 
 
-class MutablePaddedSequenceWithoutFrameRangeTest(BaseSequenceTestCase):
+class MutablePaddedSequenceWithoutframe_rangeTest(BaseSequenceTestCase):
     """ Additional tests for a mutable padded sequence object without any frame range.
     """
 
     def setUp(self):
         """ Set up the testing class.
         """
-        super(MutablePaddedSequenceWithoutFrameRangeTest, self).setUp()
+        super(MutablePaddedSequenceWithoutframe_rangeTest, self).setUp()
         self.sequence_str = os.path.join("path", "to", "a.%04d.exr")
-        self.sequence = sequence.Sequence.fromString(self.sequence_str, allowEmpty=True)
+        self.sequence = sequence.Sequence.from_string(self.sequence_str, allow_empty=True)
 
     def test_valid_properties(self):
         """ Ensure we can access basic properties.
@@ -686,7 +689,7 @@ class MutablePaddedSequenceWithoutFrameRangeTest(BaseSequenceTestCase):
             (self.sequence.head, "a."),
             (self.sequence.tail, ".exr"),
             (self.sequence.padding, 4),
-            (self.sequence.hasLeadingZeros, True),
+            (self.sequence.has_leading_zeros, True),
             (self.sequence.missing, []),
         ):
             self.assertEqual(expected, actual)
@@ -694,7 +697,7 @@ class MutablePaddedSequenceWithoutFrameRangeTest(BaseSequenceTestCase):
     def test_invalid_properties(self):
         """ Validate accessing incompatible properties raise an exception.
         """
-        for attr in ("start", "end", "frameRange"):
+        for attr in ("start", "end", "frame_range"):
             with self.assertRaises(sequence.NoFrameRangeError) as error:
                 getattr(self.sequence, attr)
             self.assertEqual("No frame range information available.", str(error.exception))
@@ -719,6 +722,6 @@ class MutablePaddedSequenceWithoutFrameRangeTest(BaseSequenceTestCase):
             with self.assertRaises(ValueError) as error:
                 self.sequence.format(format_)
             self.assertEqual(
-                "Could not format sequence without a frame range to an extended format.",
+                f"Cannot format sequence without a frame range to {sequence.PredefinedFormat.LEGACY_HASHTAG_EXTENDED}.",
                 str(error.exception),
             )

@@ -12,87 +12,87 @@ class TestSequenceFromFormat(unittest.TestCase):
     def test_from_common(self):
         """ Ensure a Sequence object can be created from a string.
         """
-        result = sequence.Sequence.fromString("sequence.%04d.ext 1-5")
+        result = sequence.Sequence.from_string("sequence.%04d.ext 1-5")
 
         self.assertEqual(
-            ("sequence.", 1, 5, ".ext", 4,),
-            (result.head, result.frameRange.start, result.frameRange.end, result.tail, result.padding),
+            ("sequence.", 1, 5, ".ext", 4),
+            (result.head, result.frame_range.start, result.frame_range.end, result.tail, result.padding),
         )
 
     def test_from_common_spaces_filename(self):
         """ Ensure a Sequence object can be created from a string.
         """
-        result = sequence.Sequence.fromString("/path/to/a/sequ en ce.1-5#.ext")
+        result = sequence.Sequence.from_string("/path/to/a/sequ en ce.1-5#.ext")
 
         self.assertEqual(
-            ("sequ en ce.", 1, 5, ".ext", 1,),
-            (result.head, result.frameRange.start, result.frameRange.end, result.tail, result.padding),
+            ("sequ en ce.", 1, 5, ".ext", 1),
+            (result.head, result.frame_range.start, result.frame_range.end, result.tail, result.padding),
         )
 
     def test_from_common_spaces_dirname(self):
         """ Ensure a Sequence object can be created from a string.
         """
-        result = sequence.Sequence.fromString("/path/to/a /sequence.1-5#.ext")
+        result = sequence.Sequence.from_string("/path/to/a /sequence.1-5#.ext")
 
         self.assertEqual(
-            ("sequence.", 1, 5, ".ext", 1,),
-            (result.head, result.frameRange.start, result.frameRange.end, result.tail, result.padding),
+            ("sequence.", 1, 5, ".ext", 1),
+            (result.head, result.frame_range.start, result.frame_range.end, result.tail, result.padding),
         )
 
     def test_from_common_spaces(self):
         """ Ensure a Sequence object can be created from a string.
         """
-        result = sequence.Sequence.fromString("/path/to/a /sequ ence.1-5#.ext")
+        result = sequence.Sequence.from_string("/path/to/a /sequ ence.1-5#.ext")
 
         self.assertEqual(
-            ("sequ ence.", 1, 5, ".ext", 1,),
-            (result.head, result.frameRange.start, result.frameRange.end, result.tail, result.padding),
+            ("sequ ence.", 1, 5, ".ext", 1),
+            (result.head, result.frame_range.start, result.frame_range.end, result.tail, result.padding),
         )
 
     def test_from_common_padded(self):
         """ Ensure a Sequence object can be created from a string.
         """
-        result = sequence.Sequence.fromString("/path/to/a/sequence.0001-0005.ext")
+        result = sequence.Sequence.from_string("/path/to/a/sequence.0001-0005.ext")
 
         self.assertEqual(
-            ("sequence.", 1, 5, ".ext", 4,),
-            (result.head, result.frameRange.start, result.frameRange.end, result.tail, result.padding,),
+            ("sequence.", 1, 5, ".ext", 4),
+            (result.head, result.frame_range.start, result.frame_range.end, result.tail, result.padding),
         )
 
     def test_from_common_noPad(self):
         """ Ensure a Sequence object can be created from a string.
         """
-        result = sequence.Sequence.fromString("/path/to/a/sequence.1-10#.ext")
+        result = sequence.Sequence.from_string("/path/to/a/sequence.1-10#.ext")
 
         self.assertEqual(
-            ("sequence.", 1, 10, ".ext", 2,),
-            (result.head, result.frameRange.start, result.frameRange.end, result.tail, result.padding,),
+            ("sequence.", 1, 10, ".ext", 2),
+            (result.head, result.frame_range.start, result.frame_range.end, result.tail, result.padding),
         )
 
     def test_from_common_noPad_2(self):
         """ Ensure a Sequence object can be created from a string.
         """
-        result = sequence.Sequence.fromString("/path/to/a/sequence.%d.ext 0-10")
+        result = sequence.Sequence.from_string("/path/to/a/sequence.%d.ext 0-10")
 
         self.assertEqual(
-            ("sequence.", 0, 10, ".ext", 2, False,),
-            (result.head, result.frameRange.start, result.frameRange.end, result.tail, result.padding, result.hasLeadingZeros,),
+            ("sequence.", 0, 10, ".ext", 2, False),
+            (result.head, result.frame_range.start, result.frame_range.end, result.tail, result.padding, result.has_leading_zeros),
         )
 
     def test_from_common_noPad_3(self):
         """ Ensure a Sequence object can be created from a string.
         """
-        result = sequence.Sequence.fromString("/path/to/a/sequence.%0d.ext 1-10")
+        result = sequence.Sequence.from_string("/path/to/a/sequence.%0d.ext 1-10")
 
         self.assertEqual(
-            ("sequence.", 1, 10, ".ext", 2, False,),
-            (result.head, result.frameRange.start, result.frameRange.end, result.tail, result.padding, result.hasLeadingZeros,),
+            ("sequence.", 1, 10, ".ext", 2, False),
+            (result.head, result.frame_range.start, result.frame_range.end, result.tail, result.padding, result.has_leading_zeros),
         )
 
     def test_from_common_versionAndFrame(self):
         """ Ensure a Sequence object can be created from a string.
         """
-        result = sequence.Sequence.fromString("/path/to/a/sequence_v40.0-1@@@@.ext")
+        result = sequence.Sequence.from_string("/path/to/a/sequence_v40.0-1@@@@.ext")
 
         self.assertEqual(
             (
@@ -105,17 +105,17 @@ class TestSequenceFromFormat(unittest.TestCase):
             ),
             (
                 result.head,
-                result.frameRange.start,
-                result.frameRange.end,
+                result.frame_range.start,
+                result.frame_range.end,
                 result.tail, result.padding,
-                result.hasLeadingZeros,
+                result.has_leading_zeros,
             ),
         )
 
     def test_from_common_zfillPadded(self):
         """ Ensure a Sequence object can be created from a string.
         """
-        result = sequence.Sequence.fromString("sequence.0800-0805#.ext")
+        result = sequence.Sequence.from_string("sequence.0800-0805#.ext")
 
         self.assertEqual(
             (
@@ -129,19 +129,19 @@ class TestSequenceFromFormat(unittest.TestCase):
             ),
             (
                 result.head,
-                result.frameRange.start,
-                result.frameRange.end,
+                result.frame_range.start,
+                result.frame_range.end,
                 result.tail,
                 result.padding,
                 result.format(sequence.PredefinedFormat.FFMPEG),
-                result.hasLeadingZeros,
+                result.has_leading_zeros,
             ),
         )
 
     def test_from_common_frameDelimiterSwitch(self):
         """ Ensure a Sequence object can be created from a string.
         """
-        result = sequence.Sequence.fromString("/path/to/a/sequence.799-805@@@@.ext")
+        result = sequence.Sequence.from_string("/path/to/a/sequence.799-805@@@@.ext")
 
         self.assertEqual(
             (
@@ -153,8 +153,8 @@ class TestSequenceFromFormat(unittest.TestCase):
             ),
             (
                 result.head,
-                result.frameRange.start,
-                result.frameRange.end,
+                result.frame_range.start,
+                result.frame_range.end,
                 result.tail,
                 result.padding,
             ),
@@ -163,57 +163,57 @@ class TestSequenceFromFormat(unittest.TestCase):
     def test_from_common_pointDelimiter(self):
         """ Ensure a Sequence object can be created from a string.
         """
-        result = sequence.Sequence.fromString("/path/to/a/sequence.1001-1005.ext")
+        result = sequence.Sequence.from_string("/path/to/a/sequence.1001-1005.ext")
 
         self.assertEqual(
-            ("sequence.", 1001, 1005, ".ext", 4,),
-            (result.head, result.frameRange.start, result.frameRange.end, result.tail, result.padding,),
+            ("sequence.", 1001, 1005, ".ext", 4),
+            (result.head, result.frame_range.start, result.frame_range.end, result.tail, result.padding),
         )
 
     def test_from_common_underscoreDelimiter(self):
         """ Ensure a Sequence object can be created from a string.
         """
-        result = sequence.Sequence.fromString("/path/to/a/sequence_1-5.ext")
+        result = sequence.Sequence.from_string("/path/to/a/sequence_1-5.ext")
 
         self.assertEqual(
-            ("sequence_", 1, 5, ".ext", 1,),
-            (result.head, result.frameRange.start, result.frameRange.end, result.tail, result.padding),
+            ("sequence_", 1, 5, ".ext", 1),
+            (result.head, result.frame_range.start, result.frame_range.end, result.tail, result.padding),
         )
 
     def test_from_common_multiple_extensions_contained(self):
         """ Ensure a Sequence object can be created from a contained sequence string with multiple extensions.
         """
-        result = sequence.Sequence.fromString("/path/to/a/sequence_1-5.bgeo.sc")
+        result = sequence.Sequence.from_string("/path/to/a/sequence_1-5.bgeo.sc")
 
         self.assertEqual(
-            ("sequence_", 1, 5, ".bgeo.sc", 1,),
-            (result.head, result.frameRange.start, result.frameRange.end, result.tail, result.padding,),
+            ("sequence_", 1, 5, ".bgeo.sc", 1),
+            (result.head, result.frame_range.start, result.frame_range.end, result.tail, result.padding),
         )
 
     def test_from_common_multiple_extensions_extended(self):
         """ Ensure a Sequence object can be created from an extended sequence string with multiple extensions.
         """
-        result = sequence.Sequence.fromString("/path/to/a/sequence_%d.bgeo.sc 1-5")
+        result = sequence.Sequence.from_string("/path/to/a/sequence_%d.bgeo.sc 1-5")
 
         self.assertEqual(
-            ("sequence_", 1, 5, ".bgeo.sc", 1,),
-            (result.head, result.frameRange.start, result.frameRange.end, result.tail, result.padding,),
+            ("sequence_", 1, 5, ".bgeo.sc", 1),
+            (result.head, result.frame_range.start, result.frame_range.end, result.tail, result.padding),
         )
 
     def test_singleFrame(self):
         """ Ensure a Sequence object can be created from a string.
         """
-        result = sequence.Sequence.fromString("sequence.%04d.ext 1-1")
+        result = sequence.Sequence.from_string("sequence.%04d.ext 1-1")
 
         self.assertEqual(
             ("sequence.", 1, 1, ".ext", 4),
-            (result.head, result.frameRange.start, result.frameRange.end, result.tail, result.padding),
+            (result.head, result.frame_range.start, result.frame_range.end, result.tail, result.padding),
         )
 
     def test_missingFrames(self):
         """ Ensure a Sequence object can be created from a 'missing frame' string.
         """
-        result = sequence.Sequence.fromString("sequence.%04d.ext 1-10 ([2,7,8])")
+        result = sequence.Sequence.from_string("sequence.%04d.ext 1-10 ([2,7,8])")
 
         self.assertEqual(
             (
@@ -223,13 +223,13 @@ class TestSequenceFromFormat(unittest.TestCase):
                 4,
                 [2, 7, 8],
             ),
-            (result.head, list(result.frameRange), result.tail, result.padding, result.frameRange.missing),
+            (result.head, list(result.frame_range), result.tail, result.padding, result.frame_range.missing),
         )
 
-    def test_explicitFrameRange(self):
+    def test_explicitframe_range(self):
         """ Ensure a Sequence object can be created from a 'explicit frame range' string.
         """
-        result = sequence.Sequence.fromString("/path/to/a/sequence.%04d.ext [1-2, 9-10]")
+        result = sequence.Sequence.from_string("/path/to/a/sequence.%04d.ext [1-2, 9-10]")
 
         self.assertEqual(
             (
@@ -240,27 +240,27 @@ class TestSequenceFromFormat(unittest.TestCase):
                 4,
                 [3, 4, 5, 6, 7, 8]
             ),
-            (result.head, result.frameRange.start, result.frameRange.end, result.tail, result.padding, result.frameRange.missing,),
+            (result.head, result.frame_range.start, result.frame_range.end, result.tail, result.padding, result.frame_range.missing),
         )
 
     def test_from_legacy_player_explicit(self):
         """ Ensure a Sequence object can be created from an alternative formatted string.
         """
-        result = sequence.Sequence.fromString("/path/to/a/sequence.####.ext 1-5")
+        result = sequence.Sequence.from_string("/path/to/a/sequence.####.ext 1-5")
 
         self.assertEqual(
-            ("sequence.", 1, 5, ".ext", 4,),
-            (result.head, result.frameRange.start, result.frameRange.end, result.tail, result.padding,),
+            ("sequence.", 1, 5, ".ext", 4),
+            (result.head, result.frame_range.start, result.frame_range.end, result.tail, result.padding),
         )
 
     def test_from_alternative_explicit_digits(self):
         """ Ensure a Sequence object can be created from an alternative formatted string.
         """
-        result = sequence.Sequence.fromString("/path/to/a/sequence.@@@.ext 1-5")
+        result = sequence.Sequence.from_string("/path/to/a/sequence.@@@.ext 1-5")
 
         self.assertEqual(
-            ("sequence.", 1, 5, ".ext", 3,),
-            (result.head, result.frameRange.start, result.frameRange.end, result.tail, result.padding,),
+            ("sequence.", 1, 5, ".ext", 3),
+            (result.head, result.frame_range.start, result.frame_range.end, result.tail, result.padding),
         )
 
 
@@ -272,7 +272,7 @@ class TestFormatSequence(unittest.TestCase):
         """ Set up testing class.
         """
         super(TestFormatSequence, self).setUp()
-        self._sequence = sequence.Sequence.fromString("sequence.1001-1002#.ext")
+        self._sequence = sequence.Sequence.from_string("sequence.1001-1002#.ext")
 
     def test_predefined_ffmpeg(self):
         """ Ensure the sequence can be formatted to the string FFmpeg format.
@@ -309,7 +309,7 @@ class TestFormatSequence(unittest.TestCase):
         with self.assertRaises(ValueError) as error:
             self._sequence.format("an_invalid_format")
 
-        self.assertEqual("Unsupported format: 'an_invalid_format'", str(error.exception))
+        self.assertEqual("Unsupported format: an_invalid_format.", str(error.exception))
 
 
 class TestFormatSequenceLeadingZeros(unittest.TestCase):
@@ -320,7 +320,7 @@ class TestFormatSequenceLeadingZeros(unittest.TestCase):
         """ Set up testing class.
         """
         super(TestFormatSequenceLeadingZeros, self).setUp()
-        self._sequence = sequence.Sequence.fromString("sequence.0998-1002#.ext")
+        self._sequence = sequence.Sequence.from_string("sequence.0998-1002#.ext")
 
     def test_predefined_ffmpeg(self):
         """ Ensure the sequence can be formatted to the string FFmpeg format.

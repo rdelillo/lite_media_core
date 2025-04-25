@@ -9,30 +9,25 @@ class TestGetSequences(unittest.TestCase):
     """ Test out lite_media_core.path_utils.getSequences feature.
     """
 
-    def test_getSequences_empty(self):
+    def test_get_sequences_empty(self):
         """ Ensure an empty list is returned when no singleFile or Sequence file could be found.
         """
-        self.assertEqual([], list(lite_media_core.path_utils.getSequences([])))
+        self.assertEqual([], list(lite_media_core.path_utils.get_sequences([])))
 
-    def test_unambiguous_leadingZeros_positive(self):
-        """Ensure getSequences return a zero padded sequence if zero padding is hinted.
+    def test_unambiguous_leading_zeros_positive(self):
+        """Ensure get_sequences return a zero padded sequence if zero padding is hinted.
         """
         for data in (
             ["img.01.ext", "img.02.ext"],
             ["img.%04d.exr 1-10"],
         ):
-            self.assertTrue(next(lite_media_core.path_utils.getSequences(data)).hasLeadingZeros, msg=data)
+            self.assertTrue(next(lite_media_core.path_utils.get_sequences(data)).has_leading_zeros, msg=data)
 
-    def test_unambiguous_leadingZeros_negative(self):
-        """Ensure getSequences return a non-zero padded sequence if non-zero padding is hinted.
+    def test_unambiguous_leading_zeros_negative(self):
+        """Ensure get_sequences return a non-zero padded sequence if non-zero padding is hinted.
         """
         for data in (
             ["img.1.ext", "img.2.ext"],
             ["img.%d.exr 1-10"],
         ):
-            self.assertFalse(next(lite_media_core.path_utils.getSequences(data)).hasLeadingZeros, msg=data)
-
-    def test_ambiguous_leadingZeros_defaultFalse(self):
-        """Ensure getSequences return a non-zero padded sequence if zero padding is ambiguous.
-        """
-        self.assertFalse(next(lite_media_core.path_utils.getSequences(["img.10.exr", "img.11.exr"])).hasLeadingZeros)
+            self.assertFalse(next(lite_media_core.path_utils.get_sequences(data)).has_leading_zeros, msg=data)

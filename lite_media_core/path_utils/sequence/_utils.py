@@ -148,7 +148,7 @@ def find_sequences_on_disk(data: str) -> list:
         except ValueError:
             continue
 
-        yield _conform_discovered_fileSeq(fileSeqSequence)
+        yield _conform_discovered_fileSeq(fileSeq_sequence)
 
 
 def find_sequences_in_list(list_data: list) -> tuple:
