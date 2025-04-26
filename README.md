@@ -25,6 +25,16 @@ Whether you're building media automation tools, integrating transcoding features
 
 ---
 
+### 🛠️ Practical Use Cases
+
+`lite_media_core` helps automate key media validation tasks across ingest, quality control, and delivery workflows.
+
+- ✅ **Validate media against client specs**: Check resolution, frame rate, codec, pixel format, and embedded timecode.
+- 🎞️ **Detect issues in image sequences**: Find missing frames or inconsistent resolutions before ingest or export.
+- 🎬 **Inspect QuickTime files**: Verify color range settings (video vs full) or codec compatibility for web or broadcast delivery.
+
+---
+
 ### ⚡ Quick Start
 
 ```bash
