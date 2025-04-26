@@ -99,3 +99,76 @@ class TestIdentifyFromFiles(unittest.TestCase):
             (True, "movie.mov"),
             (isinstance(movie, media.Movie), movie.path),
         )
+
+
+class TestListDir(unittest.TestCase):
+    """ Test mediaos.listdir feature.
+    """
+
+    def setUp(self):
+        """Initialize temporary directory structure for testing listdir.
+        
+        |root/
+            |-- temp.mov (video)
+            |-- temp.wav (audio)
+            |-- temp.txt (non-media)
+        """
+        super(TestListDir, self).setUp()
+
+        self.root = tempfile.mkdtemp()
+
+        # Create media and non-media files
+        tempfile.NamedTemporaryFile(suffix=".mov", dir=self.root, delete=False)
+        tempfile.NamedTemporaryFile(suffix=".wav", dir=self.root, delete=False)
+        tempfile.NamedTemporaryFile(suffix=".txt", dir=self.root, delete=False)
+
+    def test_listdir(self):
+        """Ensure listdir identifies media and non-media files correctly.
+        """
+        items = mediaos.listdir(self.root)
+
+        # Separate medias and non-media files
+        medias, non_medias = [], []
+        for item in items:
+            if isinstance(item, media.Media):
+                medias.append(item)
+            else:
+                non_medias.append(item)
+
+        # Should find:
+        # - 2 medias (Movie, Audio)
+        # - 1 non-media file (.txt)
+        self.assertEqual(len(medias), 2)
+        self.assertEqual(len(non_medias), 1)
+
+
+class TestListDirSequence(unittest.TestCase):
+    """ Test mediaos.listdir feature with an image sequence.
+    """
+
+    def setUp(self):
+        """Initialize a temporary directory containing an image sequence.
+
+        |root/
+            |-- img_seq.1001.exr
+            |-- img_seq.1002.exr
+            |-- img_seq.1003.exr
+        """
+        super(TestListDirSequence, self).setUp()
+
+        self.root = tempfile.mkdtemp()
+
+        # Create a fake image sequence
+        for frame in range(1001, 1004):
+            filename = f"img_seq.{frame}.exr"
+            open(os.path.join(self.root, filename), "a").close()
+
+    def test_listdir_sequence(self):
+        """Ensure listdir detects image sequence as a single ImageSequence object.
+        """
+        items = mediaos.listdir(self.root)
+        self.assertEqual(len(items), 1)
+
+        sequence = items[0]
+        self.assertIsInstance(sequence, media.ImageSequence)
+        self.assertTrue(sequence.path.endswith("img_seq.####.exr 1001-1003"))
