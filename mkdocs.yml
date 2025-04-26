@@ -1,0 +1,46 @@
+site_name: lite_media_core
+site_url: https://rdelillo.github.io/lite_media_core/
+repo_url: https://github.com/rdelillo/lite_media_core
+repo_name: lite_media_core
+edit_uri: edit/main/docs/
+
+theme:
+  name: material
+  palette:
+    - scheme: slate
+      primary: indigo
+      accent: light blue
+  font:
+    text: Roboto
+    code: Roboto Mono
+#  logo: assets/logo.png  # si tu veux un petit logo en haut
+#  favicon: assets/favicon.ico
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - content.code.copy
+    - content.tabs.link
+    - content.action.edit
+    - content.action.view
+    - search.highlight
+
+
+markdown_extensions:
+  - admonition
+  - codehilite
+  - footnotes
+  - meta
+  - toc:
+      permalink: true
+  - pymdownx.superfences
+  - pymdownx.tabbed
+  - pymdownx.emoji
+  - pymdownx.tasklist
+  - pymdownx.highlight
+
+nav:
+  - Home: index.md
+  - Get Started: quickstart.md
+  - Image Sequence: api/sequence.md
+  - Movie: api/movie.md
+  - Utilities: api/utils.md
