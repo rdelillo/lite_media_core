@@ -3,6 +3,8 @@
 import os
 import tempfile
 import unittest
+import shutil
+
 
 from lite_media_core import media
 from lite_media_core import mediaos
@@ -45,6 +47,10 @@ class TestWalk(unittest.TestCase):
         tempfile.NamedTemporaryFile(suffix=".py", dir=self.root, delete=False)
         tempfile.NamedTemporaryFile(suffix=".csp", dir=self.root, delete=False)
         tempfile.NamedTemporaryFile(suffix=".cdl", dir=imgSeqDir, delete=False)
+
+    def tearDown(self):
+        """Clean up temporary directory after each test."""
+        shutil.rmtree(self.root)
 
     def test_walk(self):
         """ Ensure mediaos walks properly over a root directory.
@@ -122,6 +128,10 @@ class TestListDir(unittest.TestCase):
         tempfile.NamedTemporaryFile(suffix=".wav", dir=self.root, delete=False)
         tempfile.NamedTemporaryFile(suffix=".txt", dir=self.root, delete=False)
 
+    def tearDown(self):
+        """Clean up temporary directory after each test."""
+        shutil.rmtree(self.root)
+
     def test_listdir_invalid_path(self):
         """Ensure listdir raises ValueError for invalid paths.
         """
@@ -168,6 +178,10 @@ class TestListDirSequence(unittest.TestCase):
         for frame in range(1001, 1004):
             filename = f"img_seq.{frame}.exr"
             open(os.path.join(self.root, filename), "a").close()
+
+    def tearDown(self):
+        """Clean up temporary directory after each test."""
+        shutil.rmtree(self.root)
 
     def test_listdir_sequence(self):
         """Ensure listdir detects image sequence as a single ImageSequence object.
