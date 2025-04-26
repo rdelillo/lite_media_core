@@ -6,24 +6,20 @@ edit_uri: edit/main/docs/
 
 theme:
   name: material
-  palette:
-    - scheme: slate
-      primary: indigo
-      accent: light blue
-  font:
-    text: Roboto
-    code: Roboto Mono
-#  logo: assets/logo.png  # si tu veux un petit logo en haut
-#  favicon: assets/favicon.ico
   features:
+    - navigation.instant
     - navigation.tabs
     - navigation.sections
     - content.code.copy
-    - content.tabs.link
-    - content.action.edit
-    - content.action.view
-    - search.highlight
-
+  palette:
+    - scheme: slate
+      toggle:
+        icon: material/weather-night
+        name: Switch to light mode
+    - scheme: default
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to dark mode
 
 markdown_extensions:
   - admonition
@@ -43,4 +39,4 @@ nav:
   - Get Started: quickstart.md
   - Image Sequence: api/sequence.md
   - Movie: api/movie.md
-  - Utilities: api/utils.md
+  - Utils: api/utils.md
