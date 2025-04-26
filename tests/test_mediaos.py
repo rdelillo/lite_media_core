@@ -122,6 +122,12 @@ class TestListDir(unittest.TestCase):
         tempfile.NamedTemporaryFile(suffix=".wav", dir=self.root, delete=False)
         tempfile.NamedTemporaryFile(suffix=".txt", dir=self.root, delete=False)
 
+    def test_listdir_invalid_path(self):
+        """Ensure listdir raises ValueError for invalid paths.
+        """
+        with self.assertRaises(ValueError):
+            mediaos.listdir("invalid_noneexistent_path")
+
     def test_listdir(self):
         """Ensure listdir identifies media and non-media files correctly.
         """
