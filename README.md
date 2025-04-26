@@ -1,6 +1,6 @@
 # lite_media_core
 
-> A lightweight yet powerful media framework for developers.
+> A streamlined Python framework for developers to validate, control, and inspect media workflows.
 
 [![Build Status](https://github.com/rdelillo/lite_media_core/actions/workflows/run_tests.yml/badge.svg)](https://github.com/rdelillo/lite_media_core/actions/workflows/run_tests.yml)
 [![Coverage](https://codecov.io/gh/rdelillo/lite_media_core/branch/main/graph/badge.svg)](https://codecov.io/gh/rdelillo/lite_media_core)

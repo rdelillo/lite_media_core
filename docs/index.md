@@ -1,29 +1,6 @@
 # lite_media_core
 
-A modern Python framework to analyze, validate, and automate media workflows.
-
----
-
-<div style="text-align: center; margin-top: 3rem;">
-
-<a href="quickstart/" style="
-  display: inline-block;
-  background: #3f51b5;
-  color: white;
-  padding: 0.25em 0.5em;
-  margin: 0.5em;
-  border-radius: 8px;
-  text-decoration: none;
-  font-size: 1em;
-  font-weight: bold;
-  transition: background 0.3s;
-">
-🚀 Get Started
-</a>
-
-</div>
-
----
+> A streamlined Python framework for developers to validate, control, and inspect media workflows.
 
 <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.25rem; margin-top: 2rem;">
 
@@ -56,6 +33,29 @@ A modern Python framework to analyze, validate, and automate media workflows.
 
 </div>
 
+
+---
+
+<div style="text-align: center; margin-top: 3rem;">
+
+<a href="quickstart/" style="
+  display: inline-block;
+  background: #3f51b5;
+  color: white;
+  padding: 0.25em 0.5em;
+  margin: 0.5em;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 1em;
+  font-weight: bold;
+  transition: background 0.3s;
+">
+🚀 Get Started
+</a>
+
+</div>
+
+---
 
 ## Credits
 
