@@ -37,6 +37,7 @@ markdown_extensions:
 nav:
   - Home: index.md
   - Get Started: quickstart.md
-  - Image Sequence: api/sequence.md
+  - Image(s): api/sequence.md
   - Movie: api/movie.md
   - Utils: api/utils.md
+  - Experimental: api/future.md

@@ -116,7 +116,7 @@ a:hover {
   <h3 style="margin-top: 0;">And much more...</h3>
   <ul class="card-small" style="line-height: 1.8; padding-left: 0rem;">
     <li><a>Detect anamorphic images</a></li>
-    <li><a>Check legal vs full color range</a></li>
+    <li><a>Legal vs full color range</a></li>
     <li><a>Inspect audio sample rates</a></li>
   </ul>
 </div>
