@@ -114,7 +114,7 @@ a:hover {
 <div style="padding: 1.5rem; border-radius: 12px; grid-area: feature6;">
   <h3 style="margin-top: 0;">🔎 Access detailed media metadata</h3>
   <p>Retrieve complete metadata as a Python dictionary.</p>
-  <a>See example</a>
+  <a href="api/utils">See example</a>
 </div>
 
 <div style="padding: 1.5rem; border-radius: 12px; grid-area: feature4;">
@@ -146,7 +146,7 @@ a:hover {
 </div>
 
 <div class="card" style="padding: 1.5rem; border-radius: 12px;">
-  <h3 style="margin-top: 0;">Need help ?</h3>
+  <h3 style="margin-top: 0;">Need help?</h3>
   <p style="font-style: italic;">Contributions are always welcome!</p>
   <a href="https://github.com/rdelillo/lite_media_core/issues/new" target="_blank" style="
     display: inline-block;

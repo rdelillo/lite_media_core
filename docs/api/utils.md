@@ -24,6 +24,8 @@ else:
         print(f"{media_obj} is a single image.")
     elif isinstance(media_obj, Audio):
         print(f"{media_obj} is an audio.")
+
+    print(media_obj.metadata)
 ```
 
 

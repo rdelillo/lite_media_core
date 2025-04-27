@@ -7,7 +7,7 @@ from lite_media_core import Image
 
 img = Image("path/to/image.png")
 
-if img.exists:  # Check if online ?
+if img.exists:  # Check if online?
     width, height = img.resolution
     print("Resolution:", img.resolution)
     print("Frame Range:", img.frame_range)
