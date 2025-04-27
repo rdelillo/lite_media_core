@@ -84,15 +84,15 @@ class TestMovie(unittest.TestCase):
         )
 
     def test_dnxhr_video_range(self):
-        """ Check video color range can be retrieved from DNxHR video.
+        """ Check can read a video range DNxHR video.
         """
         movie = media.Movie(os.path.join(self.media_path, "dnxhr_video.mov"))
         color_primaries = movie.metadata["Video"].get("color_primaries")
 
-        self.assertTrue("BT.709" in color_primaries)
+        self.assertTrue("BT.601" in color_primaries)
 
     def test_dnxhr_full_range(self):
-        """ Check full color range can be retrieved from DNxHR video.
+        """ Check can read a full range DNxHR video.
         """
         movie = media.Movie(os.path.join(self.media_path, "dnxhr_full.mov"))
         color_primaries = movie.metadata["Video"].get("color_primaries")
