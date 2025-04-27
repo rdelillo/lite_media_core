@@ -7,7 +7,7 @@
 
 ---
 
-**Documentation**: 
+**Documentation**: [https://rdelillo.github.io/lite_media_core/](https://rdelillo.github.io/lite_media_core/)
 
 ---
 
