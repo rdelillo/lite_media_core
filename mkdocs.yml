@@ -1,0 +1,44 @@
+site_name: lite_media_core
+site_url: https://rdelillo.github.io/lite_media_core/
+repo_url: https://github.com/rdelillo/lite_media_core
+repo_name: lite_media_core
+edit_uri: edit/main/docs/
+
+theme:
+  name: material
+  features:
+    - navigation.instant
+    - navigation.tabs
+    - navigation.sections
+    - content.code.copy
+  palette:
+    - scheme: slate
+      toggle:
+        icon: material/weather-night
+        name: Switch to light mode
+    - scheme: default
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to dark mode
+
+markdown_extensions:
+  - admonition
+  - codehilite
+  - footnotes
+  - meta
+  - toc:
+      permalink: true
+  - pymdownx.superfences
+  - pymdownx.tabbed
+  - pymdownx.emoji
+  - pymdownx.tasklist
+  - pymdownx.highlight
+
+nav:
+  - Home: index.md
+  - 🚀 Get Started: quickstart.md
+  - Audio: api/audio.md
+  - Image(s): api/sequence.md
+  - Movie: api/movie.md
+  - Utils: api/utils.md
+  - Experimental: api/future.md
