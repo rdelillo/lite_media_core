@@ -82,11 +82,14 @@ class _AbstractFrameRate:
     def _conform_to_industry_rate(rate:  Union[str, float, decimal.Decimal]) -> Optional[tuple]:
         """ Compare input rate value against industry standards.
         """
-        for name, conformed_rate in _INDUSTRY_STANDARD_RATES.items():
-            if float(round(conformed_rate, 2)) == float(round(rate, 2)):
-                return name, conformed_rate
-
-        return None
+        return next(
+            (
+                (name, conformed_rate)
+                for name, conformed_rate in _INDUSTRY_STANDARD_RATES.items()
+                if float(round(conformed_rate, 2)) == float(round(rate, 2))
+            ),
+            None,
+        )
 
     @staticmethod
     def get_industry_standards() -> dict:
