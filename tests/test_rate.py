@@ -96,6 +96,7 @@ class TestStandardFrameRate(unittest.TestCase):
         """
         standards = rate.FrameRate.get_industry_standards()
         self.assertIsInstance(standards, dict)
+        self.assertGreater(len(standards), 0)
 
 
 class TestFrameRate(unittest.TestCase):
