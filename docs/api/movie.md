@@ -23,9 +23,9 @@ If a movie path is not a recognized video format, a `UnsupportedMimeType` except
 from lite_media_core import Movie, UnsupportedMimeType
 
 try:
-    movie = media.Movie("path/to/file.txt")
+    movie = Movie("path/to/file.txt")
 
-except media.UnsupportedMimeType as error:
+except UnsupportedMimeType as error:
     print(f"Not a valid video: {error}")
 ```
 
@@ -35,9 +35,9 @@ It is possible to create a `Movie` from a path that does not exist.
 The `Movie` object will be created, but video information will not be reachable.
 
 ```python
-from lite_media_core import media, 
+from lite_media_core import Movie 
 
-movie = media.Movie("path/to/video.mov")
+movie = Movie("path/to/video.mov")
 
 try:
     print("Codec:", movie.codec)
@@ -57,24 +57,41 @@ except MediaException as error:
 ### 1. Standard vs non-standard `FrameRate`
 
 ```python
-from lite_media_core import media, StandardFrameRate, FrameRate
+from lite_media_core import Movie, FrameRate
 
-movie = media.Movie("path/to/video.mov")
+movie = Movie("path/to/video.mov")
+print(f"value: {float(movie.frame_rate)} fps")
 
-if isinstance(movie:
-    print("Codec:", movie.codec)
+if movie.frame_rate.is_standard:
+    print(f"Standard frame rate")
+    print(f"name: {movie.frame_rate.name}")
 
-except MediaException as error:
-    if not movie.exists:
-        print(f"Movie {movie.path} is offline.")
-    else:
-        # Something else happened.
-        raise
+else:
+    print(f"Non standard frame rate")
+    print(f"Standard rates are {FrameRate.get_industry_standards()}")
 ```
 
 
 ### 2. Check movie embedded timecode
 
+[What is an embedded timecode ?](https://pomfort.com/article/timecode-in-digital-cinematography-an-overview/)
 
-### 3. Check DNxHD full vs legal color range
+```python
+from lite_media_core import Movie
 
+movie = Movie("path/to/video.mov")
+embedded_timecode = movie.timecode
+
+if embedded_timecode is not None:
+    print(f"Movie {movie} contains an embedded timecode.")
+    print(f"Embedded TC: {embedded_timecode}")
+    print(f"Embedded TC (as frames): {int(embedded_timecode)}")
+```
+
+
+### 3. Check DNxHR full vs legal color range
+
+[What are full and legal color ranges ?](https://www.thepostprocess.com/2019/09/24/how-to-deal-with-levels-full-vs-video/)
+
+```python
+```
