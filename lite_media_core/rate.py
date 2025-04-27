@@ -78,6 +78,22 @@ class _AbstractFrameRate:
         """
         return not self == other
 
+    @staticmethod
+    def _conform_to_industry_rate(rate:  Union[str, float, decimal.Decimal]) -> Optional[tuple]:
+        """ Compare input rate value against industry standards.
+        """
+        for name, conformed_rate in _INDUSTRY_STANDARD_RATES.items():
+            if float(round(conformed_rate, 2)) == float(round(rate, 2)):
+                return name, conformed_rate
+
+        return None
+
+    @staticmethod
+    def get_industry_standards() -> dict:
+        """ Return defined industry standard rates.
+        """
+        return _INDUSTRY_STANDARD_RATES.copy()
+
     @property
     def name(self) -> str:
         """ The rate name.
@@ -88,6 +104,12 @@ class _AbstractFrameRate:
 class FrameRate(_AbstractFrameRate):
     """ Frame handling.
     """
+
+    @property
+    def is_standard(self) -> bool:
+        """ Is an industry-standard frame rate.
+        """
+        return self._name in _INDUSTRY_STANDARD_RATES
 
     @classmethod
     def from_custom_value(cls, rate: Union[str, float, int, decimal.Decimal]):
@@ -110,7 +132,7 @@ class StandardFrameRate(_AbstractFrameRate):
         :raise FrameRateException: when the input rate is either invalid or not standard.
         """
         try:
-            name, conformed_rate = _conform_to_industry_rate(float(rate))
+            name, conformed_rate = self._conform_to_industry_rate(float(rate))
             super().__init__(conformed_rate, name=name)
 
         except ValueError as error:
@@ -119,12 +141,8 @@ class StandardFrameRate(_AbstractFrameRate):
         except TypeError as error:
             raise FrameRateException(f"Cannot find standard frame rate from {rate}.") from error
 
-
-def _conform_to_industry_rate(rate:  Union[str, float, decimal.Decimal]) -> Optional[tuple]:
-    """ Compare input rate value against industry standards.
-    """
-    for name, conformed_rate in _INDUSTRY_STANDARD_RATES.items():
-        if float(round(conformed_rate, 2)) == float(round(rate, 2)):
-            return name, conformed_rate
-
-    return None
+    @property
+    def is_standard(self) -> bool:
+        """ Is an industry-standard frame rate.
+        """
+        return True
