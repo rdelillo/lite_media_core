@@ -16,14 +16,14 @@ class TestMovie(unittest.TestCase):
     def setUp(self):
         """ Initialize testing class.
         """
-        media_path = os.path.join(
+        self.media_path = os.path.join(
             os.path.dirname(__file__),
             "..",
             "resources",
             "media",
         )
-        self.movie = media.Movie(os.path.join(media_path, "video.mov"))
-        self.movie_tc = media.Movie(os.path.join(media_path, "video_with_tc.mov"))
+        self.movie = media.Movie(os.path.join(self.media_path, "video.mov"))
+        self.movie_tc = media.Movie(os.path.join(self.media_path, "video_with_tc.mov"))
 
     def test_not_from_video(self):
         """ Ensure a Movie object fails when not created from a video file.
@@ -75,10 +75,26 @@ class TestMovie(unittest.TestCase):
             self.movie.frame_range
         )
 
-    def test_frame_range_embeddedTc(self):
+    def test_frame_range_embedded_tc(self):
         """ Ensure a frame range can be retrieved from a Movie embedding a timecode.
         """
         self.assertEqual(
             path_utils.sequence.FrameRange(89356, 89357),
             self.movie_tc.frame_range
         )
+
+    def test_dnxhr_video_range(self):
+        """ Check can read a video range DNxHR video.
+        """
+        movie = media.Movie(os.path.join(self.media_path, "dnxhr_video.mov"))
+        color_primaries = movie.metadata["Video"].get("color_primaries")
+
+        self.assertTrue("BT.601" in color_primaries)
+
+    def test_dnxhr_full_range(self):
+        """ Check can read a full range DNxHR video.
+        """
+        movie = media.Movie(os.path.join(self.media_path, "dnxhr_full.mov"))
+        color_primaries = movie.metadata["Video"].get("color_primaries")
+
+        self.assertTrue("BT.601" in color_primaries)
