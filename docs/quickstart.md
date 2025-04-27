@@ -17,6 +17,11 @@ pip install lite_media_core
 
 Grab a ready-to-use video for testing
 
+
+
+[![Alt text](assets/quickstart_placeholder.jpeg)](assets/quickstart.mp4)
+
+
 ```python
 import requests
 

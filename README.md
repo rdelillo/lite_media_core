@@ -7,6 +7,10 @@
 
 ---
 
+**Documentation**: 
+
+---
+
 ### ✨ What is `lite_media_core`?
 
 `lite_media_core` is a minimalist, developer-focused Python framework for handling media operations simply and intuitively. Designed to be lightweight, easy to integrate, and powerful enough for real-world workflows.
@@ -41,65 +45,25 @@ Whether you're building media automation tools, integrating transcoding features
 pip install lite_media_core
 ```
 
-(Optional) Download sample video:
-<table border="0" cellspacing="0" cellpadding="0" style="border: none;">
-<tr>
-<td width="50%">
-
-```bash
-pip install requests
-```
-
+Inspect an image sequence:
 ```python
-import requests
-from lite_media_core import Media, Movie
+from lite_media_core import ImageSequence
 
-# Download a sample video from the repository
-url = (
-    "https://github.com/rdelillo/lite_media_core/"
-    "raw/refs/heads/main/docs/quickstart.mp4"
-)
-output_path = "video.mp4"
+# Load a media using lite_media_core
+media = ImageSequence("/path/to/sequence.1001-1005.exr")
 
-response = requests.get(url, stream=True)
-response.raise_for_status()
+# Read sequence properties if it exists.
+if media.exists:
 
-with open(output_path, "wb") as f:
-    for chunk in response.iter_content(chunk_size=8192):
-        if chunk:
-            f.write(chunk)
-```
+    # Print basic media properties
+    print(f"Loaded media: {media.path}")
+    print(f"Resolution: {media.resolution}")
 
-</td>
-<td width="75%" align="center">
-    <a href="docs/quickstart.mp4"> <img src="docs/quickstart_placeholder.jpeg" alt="Example video preview" width="100%"> </a> <sub><i>Click to watch video.</i></sub>
-</td>
-</tr>
-</table>
+    print(f"Frame range: {media.frame_range}")
 
-Inspect video:
-```python
-from lite_media_core import Media, Movie
-
-# Load the media using lite_media_core
-media = Media.from_path("video.mp4")
-
-# Check that the media was successfully loaded and is of type Movie
-assert media.exists and isinstance(media, Movie)
-
-# Print basic media properties
-print(f"Loaded media: {media.path}")
-print(f"Resolution: {media.resolution}")
-print(f"Codec: {media.codec}")
-print(f"Duration: {media.duration} ({media.duration.seconds} seconds)")
-
-# Frame-level information
-print(f"Frame rate: {media.frame_rate}")
-print(f"Total frames: {int(media.duration)}")
-
-# (Optional) Full metadata
-print("Full metadata:")
-print(media.metadata)
+    # (Optional) Full metadata
+    print("Full metadata:")
+    print(media.metadata)
 ```
 
 ---
@@ -124,7 +88,6 @@ This project builds on powerful open-source tools:
 ---
 
 ### 💻 For Developers
-
 
 Clone and install in dev mode:
 
