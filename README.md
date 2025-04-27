@@ -29,7 +29,7 @@ Whether you're building media automation tools, integrating transcoding features
 
 ---
 
-### 🛠️ Practical Use Cases
+### Practical Use Cases
 
 `lite_media_core` helps automate key media validation tasks across ingest, quality control, and delivery workflows.
 
