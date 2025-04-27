@@ -1,5 +1,32 @@
 # Utils
 
+## 📚 Movie factory using `Media`
+
+You can use the `Media.from_path` factory to create the relevant media object.
+
+```python
+from lite_media_core import Media, Audio, Image, ImageSequence, Movie
+from lite_media_core import UnsupportedMimeType
+
+
+try:
+    media_obj = Media.from_path("/path/to/some_media.ext")
+
+except UnsupportedMimeType as error:
+    print(f"Unrecognized media path: {error}.")
+
+else:
+    if isinstance(media_obj, Movie):
+        print(f"{media_obj} is a movie.")
+    elif isinstance(media_obj, ImageSequence):
+        print(f"{media_obj} is an image sequence.")
+    elif isinstance(media_obj, Image):
+        print(f"{media_obj} is a single image.")
+    elif isinstance(media_obj, Audio):
+        print(f"{media_obj} is an audio.")
+```
+
+
 ## 📂 Discover media with `mediaos`
 
 Quickly browse folders and automatically detect media files and sequences.
@@ -17,12 +44,12 @@ Quickly browse folders and automatically detect media files and sequences.
 List all entries in a folder (non-recursive) and identify media objects.
 
 ```python
-from lite_media_core import mediaos, media
+from lite_media_core import mediaos, Media
 
 items = mediaos.listdir("/path/to/folder")
 
 for item in items:
-    if isinstance(item, media.Media):
+    if isinstance(item, Media):
         print(f"Found media: {item.path}")
 
 ```
@@ -36,11 +63,11 @@ for item in items:
 Recursively walk through a directory tree and return media objects.
 
 ```python
-from lite_media_core import mediaos, media
+from lite_media_core import mediaos, Media
 
 for root, dirs, files in mediaos.walk("/path/to/root"):
     for item in files:
-        if isinstance(item, media.Media):
+        if isinstance(item, Media):
             print(f"Found media: {item.path}")
 
 ```
@@ -69,3 +96,10 @@ for m in medias:
 
 !!! warning
     Files that are not recognized as valid media will be silently ignored.
+
+
+## 📄 Represent non-media sequence
+
+```
+TODO
+```

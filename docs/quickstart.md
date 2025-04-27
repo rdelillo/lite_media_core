@@ -11,7 +11,7 @@ pip install lite_media_core
 
 ---
 
-## 🎬 Video
+## 🎬 Introduction using a Video
 
 ### 1. Download sample video
 
@@ -42,11 +42,11 @@ print(f"Downloaded {output_path}")
 Load the media using lite_media_core:
 
 ```python
-from lite_media_core import Media, Movie
+from lite_media_core import Movie
 
-media = Media.from_path("video.mp4")
+media = Movie("video.mp4")
 
-assert media.exists and isinstance(media, Movie)
+assert media.exists
 
 print(f"Path: {media.path}")
 print(f"Resolution: {media.resolution}")
@@ -59,15 +59,9 @@ print(f"Total frames: {int(media.duration)}")
 print(media.metadata)
 ```
 
----
+## 🧩 Next steps
 
-
-## 🎞️ Image Sequence
-
-### Inspect sequence
-
-Load the media using lite_media_core:
-
-```python
-# TODO
-```
+* [Load an image](api/sequence/#image)
+* [Load an image sequence](api/sequence/#imagesequence)
+* [More info about Movie media](api/movie/)
+* [Automatically detect media files and sequences from folders](api/utils/#discover-media-with-mediaos)

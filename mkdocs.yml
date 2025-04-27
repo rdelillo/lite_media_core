@@ -36,7 +36,8 @@ markdown_extensions:
 
 nav:
   - Home: index.md
-  - Get Started: quickstart.md
+  - 🚀 Get Started: quickstart.md
+  - Audio: api/audio.md
   - Image(s): api/sequence.md
   - Movie: api/movie.md
   - Utils: api/utils.md
