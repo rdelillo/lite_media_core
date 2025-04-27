@@ -26,8 +26,8 @@ Grab a ready-to-use video for testing
 import requests
 
 url = (
-	"https://github.com/rdelillo/lite_media_core/raw/refs/"
-	"heads/main/docs/quickstart.mp4"
+	"https://github.com/rdelillo/lite_media_core/raw/refs"
+	"/heads/main/docs/assets/quickstart.mp4"
 )
 output_path = "video.mp4"
 
