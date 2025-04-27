@@ -57,7 +57,7 @@ a:hover {
     display: inline-block;
     background: linear-gradient(90deg, #3b82f6, #6366f1);
     color: white;
-    max-width: 180px;
+    max-width: 200px;
     font-weight: 600;
     padding: 0.8em 1.5em;
     border-radius: 8px;
@@ -124,8 +124,7 @@ a:hover {
 <div style="padding: 1.5rem; border-radius: 12px; background-color: rgba(0, 128, 255, 0.025);">
   <h3 style="margin-top: 0;">🧪 Experimental</h3>
   <ul class="card-small" style="line-height: 1.8; padding-left: 0rem;">
-    <li>Load media from URLs</li>
-    <li>Download and validate videos from YouTube, Vimeo, etc.</li>
+    <li><a>Load media from URLs</a></li>
   </ul>
 </div>
 
@@ -160,6 +159,7 @@ a:hover {
 
 <ul style="line-height: 1.8; padding-left: 1.5rem;">
   <li><a href="https://mediaarea.net/en/MediaInfo" target="_blank">MediaInfo</a> — Cross-platform media metadata engine</li>
+  <li><a href="https://github.com/sbraz/pymediainfo" target="_blank">pymediainfo</a> — Python wrapper around MediaInfo</li>
   <li><a href="https://github.com/justinfx/fileseq" target="_blank">fileseq</a> — Frame-based sequence management</li>
   <li><a href="https://github.com/eoyilmaz/timecode" target="_blank">timecode</a> — Timecode parsing and manipulation</li>
 </ul>
