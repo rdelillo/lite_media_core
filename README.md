@@ -58,13 +58,14 @@ if media.exists:
     # Print basic media properties
     print(f"Loaded media: {media.path}")
     print(f"Resolution: {media.resolution}")
-
     print(f"Frame range: {media.frame_range}")
 
     # (Optional) Full metadata
     print("Full metadata:")
     print(media.metadata)
 ```
+
+**More examples in the documentation:**: [https://rdelillo.github.io/lite_media_core/](https://rdelillo.github.io/lite_media_core/)
 
 ---
 
