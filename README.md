@@ -101,7 +101,7 @@ pip install -e .
 Run tests:
 ```bash
 pip install -e .[testing]
-pytest
+pytest ./tests
 ```
 
 Run linter:
