@@ -61,7 +61,7 @@ You can create an `ImageSequence` from:
 
 * A formatted sequence path
 * A list of image paths
-* [Scanning a folder with `medios`](api/utils/#discover-media-with-mediaos)
+* [Scanning a folder with `medios`](/lite_media_core/api/utils/#discover-media-with-mediaos)
 
 ```python
 from lite_media_core import ImageSequence
