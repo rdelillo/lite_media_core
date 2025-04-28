@@ -65,7 +65,7 @@ if media.exists:
     print(media.metadata)
 ```
 
-**More examples in the documentation:**: [https://rdelillo.github.io/lite_media_core/](https://rdelillo.github.io/lite_media_core/)
+**More examples in the documentation:** [https://rdelillo.github.io/lite_media_core/](https://rdelillo.github.io/lite_media_core/)
 
 ---
 
