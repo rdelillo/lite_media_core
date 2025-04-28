@@ -21,7 +21,7 @@ Whether you're building media automation tools, integrating transcoding features
 
 ### 🌟 Features
 
-- **Clean and intuitive API**: Handles image, image sequence, video, audio... Get started in seconds
+- **Clean and intuitive API**: Handles [image](https://rdelillo.github.io/lite_media_core/api/sequence/#image), [image sequence](https://rdelillo.github.io/lite_media_core/api/sequence/#imagesequence), [video](https://rdelillo.github.io/lite_media_core/api/movie/#movie), [audio](https://rdelillo.github.io/lite_media_core/api/audio/#audio)... Get started in seconds
 - **Powered by MediaInfo**: Delivers accurate, detailed metadata across formats
 - **Plug-and-play utilities**: Built-in helpers for timecode, resolution, and frame rate settings
 - **Cross-platform**: Windows, macOS, Linux
