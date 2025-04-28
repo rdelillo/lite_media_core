@@ -66,7 +66,8 @@ print(media.metadata)
 
 ## 🧩 Next steps
 
-* [Load an image](api/sequence/#image)
-* [Load an image sequence](api/sequence/#imagesequence)
-* [More info about Movie media](api/movie/)
-* [Automatically detect media files and sequences from folders](api/utils/#discover-media-with-mediaos)
+* [Load an image](/lite_media_core/api/sequence/#image)
+* [Load an image sequence](/lite_media_core/api/sequence/#imagesequence)
+* [More info about Movie media](/lite_media_core/api/movie/)
+* [Automatically detect media files and sequences from folders](/lite_media_core/api/utils/#discover-media-with-mediaos)
+
