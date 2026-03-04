@@ -69,14 +69,6 @@ if media.exists:
 
 ---
 
-### 💡 Roadmap
-
-- [ ] Support media from URL via embedded features
-- [ ] Automated batch media workflows
-- [ ] Lightweight CLI or API utilities
-
----
-
 ### 🎁 Credits
 
 This project builds on powerful open-source tools:
